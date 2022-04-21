@@ -9,7 +9,7 @@ volumes:
 
 services:
   pgsql:
-    image: bitnami/postgresql:latest
+    image: postgres:latest
     restart: unless-stopped
     container_name: garden-share-pgsql
     env_file:
@@ -33,7 +33,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgsql:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgsql:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public&connect_timeout=300
     depends_on:
       - pgsql
     volumes:

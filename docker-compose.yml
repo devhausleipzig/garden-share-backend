@@ -1,0 +1,45 @@
+version: '3.8'
+
+networks:
+  backend-tier:
+    driver: bridge
+
+volumes:
+  pgsql-data:
+
+services:
+  pgsql:
+    image: bitnami/postgresql:latest
+    restart: unless-stopped
+    container_name: garden-share-pgsql
+    env_file:
+      - .env
+    volumes:
+        # in production, the type would be bind and the source would point to cloud block storage
+      - type: volume
+        source: pgsql-data
+        target: /var/lib/postgresql/data
+    networks:
+      - backend-tier
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: garden-share-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgsql:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+    depends_on:
+      - pgsql
+    volumes:
+    # in production, the source would point to cloud block storage
+      - type: bind
+        source: ./prisma
+        target: /prisma
+    networks:
+      - backend-tier

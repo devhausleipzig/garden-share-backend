@@ -35,6 +35,8 @@ const CreateUserModel = Type.Object({
     posts: Type.Array(CreatePostModel)
 })
 
+app.get('/', {}, async (request, reply) => reply.send('hello'))
+
 app.post<{ Body: Static<typeof CreateUserModel> }>
 (
     `/signup`,
@@ -74,7 +76,7 @@ app.get('/users', async (request, reply) => {
 
 const start = async () => {
     try {
-        await app.listen(8000)
+        await app.listen(8000, '0.0.0.0')
     } catch (err) {
         app.log.error(err)
         process.exit(1)

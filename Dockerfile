@@ -7,6 +7,7 @@ RUN apt-get -qy update && apt-get -qy install openssl
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
+COPY tsconfig.json ./
 COPY prisma ./prisma/
 
 # Install app dependencies

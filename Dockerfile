@@ -16,6 +16,4 @@ RUN npm install
 COPY ./src /src
 WORKDIR /
 
-EXPOSE 8000
-
 CMD ["npm", "start"]

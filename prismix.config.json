@@ -1,0 +1,11 @@
+{
+    "mixers": [
+        {
+            "input": [
+                "./src/base.schema.prisma",
+                "./src/modules/**/schema.prisma"
+            ],
+            "output": "prisma/schema.prisma"
+        }
+    ]
+}

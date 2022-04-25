@@ -6,41 +6,45 @@ import fastifySwagger from 'fastify-swagger'
 const prisma = new PrismaClient()
 const app = fastify({ logger: true })
 
-// write utility for gathering tags from "component" folders
-const tags: Array<{ name: string, description: string}> = [];
+import { router, tags, models } from './router'
 
 app.register(fastifySwagger, {
     exposeRoute: true,
     routePrefix: '/docs',
     swagger: {
         info: { title: 'fastify-api', version: '0.1.0' },
+        definitions: {} // need to figure out typing here for "models"
+    }
+})
+
+app.register(router)
+
+//@ts-ignore
+definitions['CreatePostModel'] = CreatePostModel
+//@ts-ignore
+definitions['CreateUserModel'] = CreateUserModel
+
+const TestParams = Type.Object({
+    id: Type.Integer()
+})
+
+app.get<{ Params: Static<typeof TestParams> }>
+(
+    '/test/:id',
+    {
+        schema: {
+            params: TestParams
+        }
     },
-})
-
-// write utility for gathering routes from "component" folders
-const routes: Array<(fastify: FastifyInstance, options: RouteOptions) => void> = [];
-routes.forEach( (route) => {
-    app.register(route)
-} )
-
-
-const CreatePostModel = Type.Object({
-    title: Type.String(),
-    content: Type.String()
-})
-
-const CreateUserModel = Type.Object({
-    name: Type.String(),
-    email: Type.String({ format: 'email' }),
-    posts: Type.Array(CreatePostModel)
-})
-
-app.get('/', {}, async (request, reply) => reply.send('hello'))
+    async (request, reply) => {
+        reply.send('hello')
+    }
+)
 
 app.post<{ Body: Static<typeof CreateUserModel> }>
 (
     `/signup`,
-    { 
+    {
         schema: {
             body: CreateUserModel,
             response: {
@@ -79,7 +83,6 @@ const start = async () => {
         await app.listen(8000, '0.0.0.0')
     } catch (err) {
         app.log.error(err)
-        process.exit(1)
     }
 }
 start()

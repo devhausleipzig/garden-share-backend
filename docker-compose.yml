@@ -12,6 +12,9 @@ services:
     image: postgres:latest
     restart: unless-stopped
     container_name: garden-share-pgsql
+    # remove port binding for DB in production, only here to speed up dev workflow
+    ports:
+      - "5432:5432"
     env_file:
       - .env
     volumes:

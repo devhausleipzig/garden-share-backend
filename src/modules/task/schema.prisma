@@ -1,0 +1,3 @@
+model Task {
+    identifier             String       @id @default(uuid())
+}

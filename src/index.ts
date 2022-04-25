@@ -68,6 +68,39 @@ app.post<{ Body: Static<typeof CreateUserModel> }>(
   }
 );
 
+const UpdateUserModel = Type.Object({
+  email: Type.Optional(Type.String({ format: "email" })),
+  firstName: Type.Optional(Type.String({ minLength: 2 })),
+  lastName: Type.Optional(Type.String({ minLength: 2 })),
+  password: Type.Optional(Type.String({ minLength: 6 })),
+});
+
+app.put<{ Body: Static<typeof UpdateUserModel>; Params: { id: string } }>(
+  "/users/:id",
+  {
+    schema: {
+      params: {
+        id: Type.String({ format: "uuid" }),
+      },
+      body: UpdateUserModel,
+    },
+  },
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          ...request.body,
+        },
+      });
+      reply.send(`Sucessfully updated user: ${id}`);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
 app.delete<GetUserType>(
   "/users/:id",
   {

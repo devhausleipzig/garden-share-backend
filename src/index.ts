@@ -2,6 +2,9 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { fastify, FastifyInstance, RouteOptions } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
 import fastifySwagger from "fastify-swagger";
+import { resolve } from "path";
+import { response } from "express";
+import { send500 } from "./utils/errors";
 
 const prisma = new PrismaClient();
 const app = fastify({ logger: true });
@@ -24,57 +27,74 @@ routes.forEach((route) => {
   app.register(route);
 });
 
-const CreatePostModel = Type.Object({
-  title: Type.String(),
-  content: Type.String(),
+app.get("/", {}, async (request, reply) => {
+  reply.send("hello");
+});
+
+app.get("/users", async (request, reply) => {
+  try {
+    const users = await prisma.user.findMany();
+    reply.status(200).send(users);
+  } catch (err) {
+    send500(reply);
+  }
 });
 
 const CreateUserModel = Type.Object({
-  name: Type.String(),
   email: Type.String({ format: "email" }),
-  posts: Type.Array(CreatePostModel),
-});
-
-app.get("/", {}, async (request, reply) => {
-  const users = await prisma.user.findMany();
-  reply.send(users);
+  firstName: Type.String({ minLength: 2 }),
+  lastName: Type.String({ minLength: 2 }),
+  password: Type.String({ minLength: 6 }),
 });
 
 app.post<{ Body: Static<typeof CreateUserModel> }>(
-  `/signup`,
+  "/users",
   {
     schema: {
       body: CreateUserModel,
-      response: {
-        200: Type.String(),
+    },
+  },
+  async (request, reply) => {
+    try {
+      const user = await prisma.user.create({
+        data: {
+          ...request.body,
+        },
+      });
+      reply.send(user.id);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+type GetUserType = {
+  Params: {
+    id: string;
+  };
+};
+
+app.get<GetUserType>(
+  "/users/:id",
+  {
+    schema: {
+      params: {
+        id: Type.String({ format: "uuid" }),
       },
     },
   },
   async (request, reply) => {
-    const { name, email, posts } = request.body;
-
-    // const postData = posts?.map((post: Prisma.PostCreateInput) => {
-    //   return { title: post?.title, content: post?.content };
-    // });
-
-    // const result = await prisma.user.create({
-    //   data: {
-    //     name,
-    //     email,
-    //     posts: {
-    //       create: postData,
-    //     },
-    //   },
-    // });
-
-    reply.send(JSON.stringify({ name, email, posts }));
+    const { id } = request.params;
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id },
+      });
+      reply.send(user);
+    } catch (err) {
+      send500(reply);
+    }
   }
 );
-
-app.get("/users", async (request, reply) => {
-  const users = await prisma.user.findMany();
-  reply.send(users);
-});
 
 const start = async () => {
   try {

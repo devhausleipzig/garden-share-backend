@@ -10,21 +10,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+enum Role {
+  ADMIN
+  USER
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
+model User {
+  id             String      @id @default(uuid())
+  email          String
+  firstName      String
+  lastName       String
+  password       String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  role           Role        @default(USER)
+  profilePicture String
+  messages       Message[]
+  reactions      Reactions[]
+  bookings       Booking[]
+}
+
+model Message {
+  id        String      @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  image     String
+  author    User        @relation(fields: [authorId], references: [id])
+  authorId  String
+  reactions Reactions[]
+  booking   Booking?
+}
+
+model Reactions {
+  id        String   @id @default(uuid())
+  emoji     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  viewCount Int      @default(0)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  users     User[]
+  message   Message  @relation(fields: [messageId], references: [id])
+  messageId String
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  start      DateTime
+  end        DateTime
+  private    Boolean  @default(false)
+  overnight  Boolean  @default(false)
+  published  Boolean  @default(false)
+  title      String?
+  bookedBy   User     @relation(fields: [bookedById], references: [id])
+  bookedById String
+  message    Message? @relation(fields: [messageId], references: [id])
+  messageId  String?  @unique
+  tasks      Task[]
+}
+
+enum TaskType {
+  HARVESTING
+  WATERING
+  PRUNING
+  SEEDING
+  BUILDING
+  WEEDING
+}
+
+enum Repeats {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  type      TaskType
+  deadline  DateTime
+  steps     String[]
+  repeating Repeats  @default(NONE)
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  bookingId String?
 }

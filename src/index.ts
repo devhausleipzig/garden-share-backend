@@ -36,7 +36,8 @@ const CreateUserModel = Type.Object({
 });
 
 app.get("/", {}, async (request, reply) => {
-  reply.send("Hello Dan");
+  const users = await prisma.user.findMany();
+  reply.send(users);
 });
 
 app.post<{ Body: Static<typeof CreateUserModel> }>(

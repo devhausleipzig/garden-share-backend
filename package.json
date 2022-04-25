@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon",
-    "start": "npx prisma migrate dev && ts-node src/index.ts"
+    "start": "npx prisma migrate dev && ts-node src/index.ts",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev"
   },
   "author": "",
   "license": "ISC",

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 networks:
   backend-tier:
@@ -12,10 +12,12 @@ services:
     image: postgres:latest
     restart: unless-stopped
     container_name: garden-share-pgsql
+    ports:
+      - "5432:5432"
     env_file:
       - .env
     volumes:
-        # in production, the type would be bind and the source would point to cloud block storage
+      # in production, the type would be bind and the source would point to cloud block storage
       - type: volume
         source: pgsql-data
         target: /var/lib/postgresql/data
@@ -37,7 +39,7 @@ services:
     depends_on:
       - pgsql
     volumes:
-    # in production, the source would point to cloud block storage
+      # in production, the source would point to cloud block storage
       - type: bind
         source: ./prisma
         target: /prisma

@@ -36,7 +36,7 @@ const CreateUserModel = Type.Object({
 });
 
 app.get("/", {}, async (request, reply) => {
-  reply.send("Hello");
+  reply.send("Hello Dan");
 });
 
 app.post<{ Body: Static<typeof CreateUserModel> }>(

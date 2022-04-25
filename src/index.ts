@@ -68,6 +68,28 @@ app.post<{ Body: Static<typeof CreateUserModel> }>(
   }
 );
 
+app.delete<GetUserType>(
+  "/users/:id",
+  {
+    schema: {
+      params: {
+        id: Type.String({ format: "uuid" }),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const deleteUser = await prisma.user.delete({
+        where: { id },
+      });
+      reply.send(`Sucessfully deleted: ${id}`);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
 type GetUserType = {
   Params: {
     id: string;

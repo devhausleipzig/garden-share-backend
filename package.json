@@ -5,7 +5,8 @@
     "dev": "nodemon",
     "start": "npx prisma migrate dev && ts-node src/index.ts",
     "db:push": "npx prisma db push",
-    "db:migrate": "npx prisma migrate dev"
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio"
   },
   "author": "",
   "license": "ISC",

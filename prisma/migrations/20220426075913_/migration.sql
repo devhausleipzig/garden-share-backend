@@ -29,7 +29,7 @@ CREATE TABLE "Message" (
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "image" TEXT NOT NULL,
+    "image" TEXT,
     "authorId" TEXT NOT NULL,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
@@ -82,6 +82,9 @@ CREATE TABLE "_ReactionsToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Booking_messageId_key" ON "Booking"("messageId");

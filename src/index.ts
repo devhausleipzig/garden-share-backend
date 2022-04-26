@@ -6,6 +6,7 @@ import { resolve } from "path";
 import { response } from "express";
 import { send500 } from "./utils/errors";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { isDate } from "util/types";
 
 const prisma = new PrismaClient();
 const app = fastify({ logger: true });
@@ -285,6 +286,32 @@ app.post<{ Body: Static<typeof CreateMessageModel> }>(
       reply.send(message);
     } catch (err) {
       console.log(err);
+      send500(reply);
+    }
+  }
+);
+
+// ----- AVAILABILITY ----- //
+
+// /availability?month
+
+app.get<{ Querystring: { month: string } }>(
+  "/availability",
+  {
+    schema: {
+      querystring: {
+        month: Type.String(),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { month } = request.query;
+    try {
+      const availability = await prisma.booking.findMany({
+        where: month,
+      });
+      reply.status(200).send(availability);
+    } catch (err) {
       send500(reply);
     }
   }

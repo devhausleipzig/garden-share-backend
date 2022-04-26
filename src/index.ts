@@ -6,6 +6,9 @@ import { resolve } from "path";
 import { response } from "express";
 import { send500 } from "./utils/errors";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { addListener, title } from "process";
+import { checkOneHourApart } from "./utils/date";
+import { request } from "http";
 
 const prisma = new PrismaClient();
 const app = fastify({ logger: true });
@@ -165,6 +168,70 @@ app.get<GetUserType>(
         where: { id },
       });
       reply.send(user);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+// booking endpoints
+
+const CreateBookingModel = Type.Object({
+  start: Type.String({ format: "date-time" }),
+  end: Type.String({ format: "date-time" }),
+  private: Type.Optional(Type.Boolean()),
+  overnight: Type.Optional(Type.Boolean()),
+  published: Type.Optional(Type.Boolean()),
+  title: Type.Optional(Type.String()),
+  tasks: Type.Array(Type.String({ format: "uuid" })),
+  bookedBy: Type.String({ format: "uuid" }),
+  message: Type.Optional(Type.String({ format: "uuid" })),
+});
+
+app.post<{ Body: Static<typeof CreateBookingModel> }>(
+  "/booking",
+  {
+    schema: {
+      body: CreateBookingModel,
+    },
+  },
+  async (request, reply) => {
+    const { bookedBy, tasks, ...rest } = request.body;
+    if (rest.start >= rest.end) {
+      return reply.status(400).send("End time must be after start time.");
+    }
+    if (!checkOneHourApart(new Date(rest.start), new Date(rest.end))) {
+      return reply
+        .status(400)
+        .send("Start and end time need to be one hour apart.");
+    }
+    try {
+      const booking = await prisma.booking.create({
+        data: {
+          ...rest,
+          bookedBy: { connect: { id: bookedBy } },
+          tasks: { connect: tasks.map((task) => ({ id: task })) },
+        },
+      });
+      reply.send(booking.id);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+app.delete<{ Params: { id: string } }>(
+  "/booking/:id",
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const deleteBooking = await prisma.booking.delete({
+        where: { id: String(id) },
+      });
+      // if (id !== deleteBooking.id) {
+      //   return reply.send("Booking not found.");
+      // }
+      return reply.send("Booking successfully deleted.");
     } catch (err) {
       send500(reply);
     }

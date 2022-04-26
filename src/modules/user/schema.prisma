@@ -1,18 +1,18 @@
 model Message {
-    identifier             String       @id @default(uuid())
-    author   User? @relation(fields: [userId], references: [identifier])
-    userId String?
+  identifier String  @id @default(uuid())
+  author     User?   @relation(fields: [userId], references: [identifier])
+  userId     String?
 }
 
 model Reaction {
-    identifier             String       @id @default(uuid())
-    users User[]
+  identifier String @id @default(uuid())
+  users      User[]
 }
 
 model Booking {
-    identifier             String       @id @default(uuid())
-    bookedBy  User? @relation(fields: [userId], references: [identifier])
-    userId String?
+  identifier String  @id @default(uuid())
+  bookedBy   User?   @relation(fields: [userId], references: [identifier])
+  userId     String?
 }
 
 /////////////////
@@ -24,15 +24,15 @@ enum Role {
 }
 
 model User {
-  identifier             String       @id @default(uuid())
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  role           Role        @default(USER)
-  email          String
+  identifier     String     @id @default(uuid())
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  role           Role       @default(USER)
+  email          String     @unique
   firstName      String
   lastName       String
-  passwordHash       String
-  passwordSalt       String
+  passwordHash   String
+  passwordSalt   String
   profilePicture String?
   messages       Message[]
   reactions      Reaction[]

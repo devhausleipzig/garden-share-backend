@@ -1,22 +1,12 @@
-export function gimmeMonth(date: Date) {
-  return date.toLocaleString("en-GB", { month: "long" });
+export function validateMonth(start: Date, end: Date, params: number) {
+  const bookedStartMonth = start.getMonth();
+  const bookedEndMonth = end.getMonth();
+  let bookedMonth;
+  if (bookedStartMonth === bookedEndMonth) {
+    bookedMonth = bookedStartMonth;
+  }
+
+  return month + 1;
 }
 
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "Juli",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export function isValidMonth(month) {
-  months.filter(gimmeMonth);
-}
+// start

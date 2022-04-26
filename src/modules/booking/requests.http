@@ -1,0 +1,35 @@
+POST http://localhost:8000/user/:id/bookings
+Content-Type: application/json
+
+{
+    "title": "fettes BBQ",
+    "start": "2022-04-25T16:41:44.324Z",
+  "end": "2022-04-25T17:51:44.324Z",
+  "private": "false",
+  "overnight": "false",
+  "published": "false",
+  "tasks": [],
+  "bookedBy": "ccd7480e-6a62-4c05-98d7-64162529e9ae"
+}
+
+{
+    "title": "fetter Geburtstag",
+    "start": "2022-04-25T18:41:44.324Z",
+  "end": "2022-04-25T19:51:44.324Z",
+  "private": "false",
+  "overnight": "false",
+  "published": "false",
+  "tasks": [],
+  "bookedBy": "ccd7480e-6a62-4c05-98d7-64162529e9ae"
+}
+
+{
+    "title": "",
+    "start": "2022-04-25T13:41:44.324Z",
+  "end": "2022-04-25T14:51:44.324Z",
+  "private": "true",
+  "overnight": "false",
+  "published": "false",
+  "tasks": [],
+  "bookedBy": "ccd7480e-6a62-4c05-98d7-64162529e9ae"
+}

@@ -49,12 +49,23 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         const booking = await prisma.booking.create({
           data: {
             ...rest,
+            message: {
+              create: {
+                ...rest.message,
+                author: {
+                  connect: {
+                    identifier: id,
+                  },
+                },
+              },
+            },
             bookedBy: { connect: { identifier: id } },
             tasks: { connect: tasks.map((task) => ({ identifier: task })) },
           },
         });
         reply.send(booking.identifier);
       } catch (err) {
+        console.log(err);
         send500(reply);
       }
     }
@@ -102,4 +113,10 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           },
         });
         reply.status(200).send(events);
+      } catch (err) {
+        send500(reply);
+        console.log(err);
+      }
+    }
+  );
 }

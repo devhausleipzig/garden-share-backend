@@ -17,4 +17,6 @@ const months = [
   "December",
 ];
 
-const isValidMonth = months.filter(gimmeMonth);
+export function isValidMonth(month) {
+  months.filter(gimmeMonth);
+}

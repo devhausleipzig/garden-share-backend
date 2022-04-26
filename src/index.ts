@@ -209,11 +209,11 @@ app.post<{ Body: Static<typeof CreateBookingModel> }>(
       const booking = await prisma.booking.create({
         data: {
           ...rest,
-          bookedBy: { connect: { id: bookedBy } },
+          bookedBy: { connect: { identifier: bookedBy } },
           tasks: { connect: tasks.map((task) => ({ id: task })) },
         },
       });
-      reply.send(booking.id);
+      reply.send(booking.identifier);
     } catch (err) {
       send500(reply);
     }

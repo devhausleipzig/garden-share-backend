@@ -1,0 +1,3 @@
+model Garden {
+    identifier             String       @id @default(uuid())
+}

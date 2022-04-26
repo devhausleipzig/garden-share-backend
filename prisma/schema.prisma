@@ -16,7 +16,7 @@ model User {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   role           Role       @default(USER)
-  email          String
+  email          String     @unique
   firstName      String
   lastName       String
   passwordHash   String
@@ -31,7 +31,7 @@ model Message {
   content    String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  image      String
+  image      String?
   author     User?      @relation(name: "MessageToUser", fields: [userId], references: [identifier])
   userId     String?
   reactions  Reaction[] @relation(name: "MessageToReaction")

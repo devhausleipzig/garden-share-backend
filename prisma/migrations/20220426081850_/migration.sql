@@ -16,7 +16,8 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "passwordSalt" TEXT NOT NULL,
     "profilePicture" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("identifier")
@@ -29,7 +30,7 @@ CREATE TABLE "Message" (
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "image" TEXT NOT NULL,
+    "image" TEXT,
     "userId" TEXT,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("identifier")
@@ -89,6 +90,9 @@ CREATE TABLE "_ReactionToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Booking_messageId_key" ON "Booking"("messageId");

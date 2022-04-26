@@ -1,0 +1,10 @@
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+  "email": "danielmcatee@me.com",
+  "firstName": "Dan",
+  "lastName": "McAtee",
+  "passwordHash": "password",
+  "passwordSalt": "salt"
+}

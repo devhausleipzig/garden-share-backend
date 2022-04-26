@@ -1,0 +1,29 @@
+model Reaction {
+    identifier             String       @id @default(uuid())
+}
+
+model Booking {
+    identifier             String       @id @default(uuid())
+    message Message?
+}
+
+model User {
+    identifier             String       @id @default(uuid())
+    messages Message[]
+}
+
+/////////////////
+/////////////////
+
+model Message {
+    id        String      @id @default(uuid())
+    title     String
+    content   String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    image     String
+    author    User        @relation(fields: [authorId], references: [identifier])
+    authorId  String
+    reactions Reaction[]
+    booking   Booking?
+}

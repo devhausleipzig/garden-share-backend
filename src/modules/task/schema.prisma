@@ -1,0 +1,27 @@
+enum TaskType {
+    HARVESTING
+    WATERING
+    PRUNING
+    SEEDING
+    BUILDING
+    WEEDING
+}
+
+enum Repeats {
+    NONE
+    DAILY
+    WEEKLY
+    MONTHLY
+}
+
+model Task {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    type      TaskType
+    deadline  DateTime
+    steps     String[]
+    repeating Repeats  @default(NONE)
+    booking   Booking? @relation(fields: [bookingId], references: [id])
+    bookingId String?
+}

@@ -1,0 +1,16 @@
+model Booking {
+    id         String   @id @default(uuid())
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    start      DateTime
+    end        DateTime
+    private    Boolean  @default(false)
+    overnight  Boolean  @default(false)
+    published  Boolean  @default(false)
+    title      String?
+    bookedBy   User     @relation(fields: [bookedById], references: [id])
+    bookedById String
+    message    Message? @relation(fields: [messageId], references: [id])
+    messageId  String?  @unique
+    tasks      Task[]
+}

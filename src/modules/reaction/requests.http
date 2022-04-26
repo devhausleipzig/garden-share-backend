@@ -1,0 +1,14 @@
+GET http://localhost:8000/messages/60e8434c-f650-455d-9039-1f82d9b6f369/reactions
+
+###
+
+POST http://localhost:8000/messages/60e8434c-f650-455d-9039-1f82d9b6f369/reactions
+Content-Type: application/json
+
+{
+  "emoji": "Test"
+}
+
+###
+
+DELETE http://localhost:8000/reactions/3c58ad82-6f4b-4ed2-a889-b651ef00d71f

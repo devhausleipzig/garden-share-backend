@@ -8,7 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model User {
   identifier     String     @id @default(uuid())
   bookings       Booking[]  @relation(name: "BookingToUser")

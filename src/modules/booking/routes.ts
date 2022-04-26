@@ -11,6 +11,7 @@ import {
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
 import { checkOneHourApart } from "../../utils/date";
+import { Message } from "@prisma/client";
 
 export const tags = [
   {
@@ -32,34 +33,51 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         body: CreateBookingModel,
+        params: { id: Type.String() },
       },
     },
     async (request, reply) => {
-      const { bookedBy, tasks, ...rest } = request.body;
+      const {
+        bookedBy,
+        tasks,
+        end,
+        start,
+        message,
+        overnight,
+        private: privateBooking,
+        published,
+        title,
+      } = request.body;
       const { id } = request.params;
-      if (rest.start >= rest.end) {
+      if (start >= end) {
         return reply.status(400).send("End time must be after start time.");
       }
-      if (!checkOneHourApart(new Date(rest.start), new Date(rest.end))) {
+      if (!checkOneHourApart(new Date(start), new Date(end))) {
         return reply
           .status(400)
           .send("Start and end time need to be one hour apart.");
       }
       try {
+        let fetchedMessage: Message | undefined = undefined;
+        if (message?.title && message?.content) {
+          fetchedMessage = await prisma.message.create({
+            data: {
+              title: message.title,
+              content: message.content,
+              userId: id,
+            },
+          });
+        }
         const booking = await prisma.booking.create({
           data: {
-            ...rest,
-            message: {
-              create: {
-                ...rest.message,
-                author: {
-                  connect: {
-                    identifier: id,
-                  },
-                },
-              },
-            },
-            bookedBy: { connect: { identifier: id } },
+            end,
+            start,
+            overnight,
+            private: privateBooking,
+            published,
+            title,
+            userId: id,
+            messageId: fetchedMessage?.identifier,
             tasks: { connect: tasks.map((task) => ({ identifier: task })) },
           },
         });

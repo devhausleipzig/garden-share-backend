@@ -56,15 +56,16 @@ app.post<{ Body: Static<typeof SignupModel> }>(
   "/signup",
   {
     schema: {
-      body: SignupModel,
+      body: SignupModel
     },
+    
   },
   async (request, reply) => {
     const { email } = request.body;
     try {
-      const loginEmail = await prisma.user.findUnique({
+      const loginEmail = await prisma.user.findFirst({
         where: {
-          email,
+          email: email 
         },
       });
       if (loginEmail)
@@ -98,9 +99,9 @@ app.post<{ Body: Static<typeof LoginModel> }>(
   async (request, reply) => {
     const { email, password } = request.body;
     try {
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: {
-          email,
+          email: email
         },
       });
       if (!user)

@@ -1,0 +1,40 @@
+datasource db {
+    provider = "postgresql"
+    url      = ""
+}
+
+model Booking {
+    identifier             String       @id @default(uuid())
+    tasks Task[]
+}
+
+/////////////////
+/////////////////
+
+enum TaskType {
+    HARVESTING
+    WATERING
+    PRUNING
+    SEEDING
+    BUILDING
+    WEEDING
+}
+
+enum Repeats {
+    NONE
+    DAILY
+    WEEKLY
+    MONTHLY
+}
+
+model Task {
+    identifier        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    type      TaskType
+    deadline  DateTime
+    steps     String[]
+    repeating Repeats  @default(NONE)
+    booking   Booking? @relation(fields: [bookingId], references: [identifier])
+    bookingId String?
+}

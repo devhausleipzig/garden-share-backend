@@ -1,0 +1,12 @@
+GET http://localhost:8000/messages
+
+###
+
+POST http://localhost:8000/messages
+Content-Type: application/json
+
+{
+  "title": "Test",
+  "content": "Test",
+  "userId": "5d774a50-574d-4da8-a1ea-82d9ff370834"
+}

@@ -1,0 +1,22 @@
+model Message {
+    identifier             String       @id @default(uuid())
+    reactions Reaction[]
+}
+
+model User {
+    identifier             String       @id @default(uuid())
+    reactions Reaction[]
+}
+
+/////////////////
+/////////////////
+
+model Reaction {
+  identifier        String   @id @default(uuid())
+  emoji     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+  message   Message  @relation(fields: [messageId], references: [identifier])
+  messageId String
+}

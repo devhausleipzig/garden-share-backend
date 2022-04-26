@@ -96,6 +96,70 @@ app.get<GetUserType>(
   }
 );
 
+// ----- MESSAGES -----  //
+
+// get a few for dashboard
+app.get<{ Querystring: { limit: number } }>(
+  "/message",
+  {
+    schema: {
+      querystring: {
+        limit: Type.Number(),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { limit } = request.query;
+    try {
+      const messages = await prisma.message.findMany({
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      reply.status(200).send(messages);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+// post a message
+const CreateMessageModel = Type.Object({
+  title: Type.String(),
+  content: Type.String(),
+  authorId: Type.String({ format: "uuid" }),
+});
+
+app.post<{ Body: Static<typeof CreateMessageModel> }>(
+  "/message",
+  {
+    schema: {
+      body: CreateMessageModel,
+    },
+  },
+  async (request, reply) => {
+    const { title, content, authorId } = request.body;
+    try {
+      const message = await prisma.message.create({
+        data: {
+          title,
+          content,
+          author: {
+            connect: {
+              id: authorId,
+            },
+          },
+        },
+      });
+      reply.send(message);
+    } catch (err) {
+      console.log(err);
+      send500(reply);
+    }
+  }
+);
+
 const start = async () => {
   try {
     await app.listen(8000, "0.0.0.0");

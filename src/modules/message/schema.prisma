@@ -1,10 +1,13 @@
 model Reaction {
     identifier             String       @id @default(uuid())
+    message   Message  @relation(fields: [messageId], references: [identifier])
+    messageId String
 }
 
 model Booking {
     identifier             String       @id @default(uuid())
-    message Message?
+    message    Message? @relation(fields: [messageId], references: [identifier])
+    messageId  String?  @unique
 }
 
 model User {
@@ -16,14 +19,14 @@ model User {
 /////////////////
 
 model Message {
-    id        String      @id @default(uuid())
+    identifier        String      @id @default(uuid())
     title     String
     content   String
     createdAt DateTime    @default(now())
     updatedAt DateTime    @updatedAt
     image     String
-    author    User        @relation(fields: [authorId], references: [identifier])
-    authorId  String
+    author    User        @relation(fields: [userId], references: [identifier])
+    userId  String
     reactions Reaction[]
     booking   Booking?
 }

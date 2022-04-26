@@ -1,5 +1,25 @@
+
+model User {
+    identifier             String       @id @default(uuid())
+    bookings Booking[]
+}
+
+model Message {
+    identifier        String      @id @default(uuid())
+    booking Booking?
+}
+
+model Task {
+    identifier        String   @id @default(uuid())
+    booking   Booking? @relation(fields: [bookingId], references: [identifier])
+    bookingId String?
+}
+
+/////////////////
+/////////////////
+
 model Booking {
-    id         String   @id @default(uuid())
+    identifier         String   @id @default(uuid())
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
     start      DateTime
@@ -8,9 +28,9 @@ model Booking {
     overnight  Boolean  @default(false)
     published  Boolean  @default(false)
     title      String?
-    bookedBy   User     @relation(fields: [bookedById], references: [id])
-    bookedById String
-    message    Message? @relation(fields: [messageId], references: [id])
+    bookedBy   User     @relation(fields: [userId], references: [identifier])
+    userId String
+    message    Message? @relation(fields: [messageId], references: [identifier])
     messageId  String?  @unique
     tasks      Task[]
 }

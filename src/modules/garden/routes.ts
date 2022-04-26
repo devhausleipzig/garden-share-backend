@@ -1,9 +1,15 @@
 //@ts-nocheck
 
-module.exports = function (fastify, opts) {
+export function router (fastify, opts) {
     
     fastify.get(
         '/garden',
+        {
+            schema: {
+                description: '',
+                tags: []
+            }
+        },
         (request, reply) => {
             
         })

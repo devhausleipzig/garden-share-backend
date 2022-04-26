@@ -1,17 +1,40 @@
+// stlib imports
+import path from 'path'
+
+// third-party imports
 import glob from 'glob'
-import { fastify, FastifyInstance, RouteOptions } from 'fastify'
+import { FastifyInstance, RouteOptions } from 'fastify'
 import { Static, TSchema } from '@sinclair/typebox'
 
 const allRouters: Array<(fastify: FastifyInstance, options: RouteOptions) => void> = [];
 const allTags: Array<{ name: string, description: string}> = [];
 const allModels: Array<Static<TSchema>> = [];
 
-glob.sync( './modules/**/routes.ts' ).forEach( (module) => {
-    const { router, tags, models } = require(module)
+glob.sync( '**/routes.ts' ).forEach( (modulePath) => {
+    const module = path.parse(modulePath)
+    module.dir = module.dir.split('/').filter( (fragment) => {
+        return fragment != 'src'
+    }).join('/')
 
-    allTags.push(...tags)
-    allModels.push(...models)
-    allRouters.push(router)
+    const { router, tags, models } = require(`./${module.dir}/${module.name}`)
+
+    if(router){
+        allRouters.push(router)
+    } else {
+        console.log(`No router defined in ${module.dir}`)
+    }
+
+    if(tags){
+        allTags.push(...tags)
+    } else {
+        console.log(`No tags defined in ${module.dir}`)
+    }
+
+    if(models){
+        allModels.push(...models)
+    } else {
+        console.log(`No models defined in ${module.dir}`)
+    }
 });
 
 export const tags = allTags;

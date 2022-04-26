@@ -7,13 +7,22 @@ import { prisma } from '../base.models'
 import { CreateUserModel } from './models'
 import { send500 } from '../../utils/errors'
 
-module.exports = function (app: FastifyInstance, opts: RouteOptions) {
+export const tags = [{
+    'name': 'User',
+    'description': 'Example description for user-related endpoints'
+}];
+
+export const models = [CreateUserModel];
+
+export function router (app: FastifyInstance, opts: RouteOptions) {
 
     app.post<{ Body: Static<typeof CreateUserModel> }>
     (
         `/signup`,
         {
             schema: {
+                description: 'this endpoint does stuff',
+                tags: ['User'],
                 body: CreateUserModel,
                 response: {
                     200: Type.String()
@@ -33,6 +42,12 @@ module.exports = function (app: FastifyInstance, opts: RouteOptions) {
     
     app.get(
         "/users",
+        {
+            schema: {
+                description: '',
+                tags: []
+            }
+        },
         async (request, reply) => {
             try {
                 const users = await prisma.user.findMany();
@@ -47,6 +62,8 @@ module.exports = function (app: FastifyInstance, opts: RouteOptions) {
         "/users/:id",
         {
             schema: {
+                description: '',
+                tags: [],
                 params: {
                     id: Type.String({ format: "uuid" }),
                 }

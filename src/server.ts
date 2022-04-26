@@ -1,5 +1,4 @@
-import { fastify, FastifyInstance, RouteOptions } from "fastify";
-import { Static, Type } from "@sinclair/typebox";
+import { fastify } from "fastify";
 import fastifySwagger from "fastify-swagger";
 
 const app = fastify({ logger: true });

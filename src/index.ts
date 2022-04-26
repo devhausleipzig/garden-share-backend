@@ -5,6 +5,7 @@ import fastifySwagger from "fastify-swagger";
 import { resolve } from "path";
 import { response } from "express";
 import { send500 } from "./utils/errors";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 const prisma = new PrismaClient();
 const app = fastify({ logger: true });
@@ -39,6 +40,80 @@ app.get("/users", async (request, reply) => {
     send500(reply);
   }
 });
+
+// Auth Signup Endpoint
+const SignupModel = Type.Object({
+  email: Type.String({ format: "email" }),
+  firstName: Type.String({ minLength: 2 }),
+  lastName: Type.String({ minLength: 2 }),
+  password: Type.String({ minLength: 6 }),
+});
+
+app.post<{ Body: Static<typeof SignupModel> }>(
+  "/signup",
+  {
+    schema: {
+      body: SignupModel,
+    },
+  },
+  async (request, reply) => {
+    const { email } = request.body;
+    try {
+      const loginEmail = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+      if (loginEmail)
+        return reply.status(403).send({
+          message: "Email is already assigned",
+        });
+      const user = await prisma.user.create({
+        data: {
+          ...request.body,
+        },
+      });
+      reply.send(user.id);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+// Create Login Endpoint
+const LoginModel = Type.Object({
+  email: Type.String({ format: "email" }),
+  password: Type.String({ minLength: 6 }),
+});
+app.post<{ Body: Static<typeof LoginModel> }>(
+  "/login",
+  {
+    schema: {
+      body: LoginModel,
+    },
+  },
+  async (request, reply) => {
+    const { email, password } = request.body;
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+      if (!user)
+        return reply.status(404).send({
+          message: "User not found!",
+        });
+      if (password !== user.password)
+        return reply.status(401).send({
+          message: "Incorrect Password",
+        });
+      reply.status(200).send(user);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
 
 const CreateUserModel = Type.Object({
   email: Type.String({ format: "email" }),

@@ -151,6 +151,91 @@ app.get<GetUserType>(
   }
 );
 
+// get Reactions
+
+type GetReactionType = {
+  Params: {
+    id: string;
+  };
+};
+
+app.get<GetReactionType>(
+  "/messages/:id/reactions",
+  {
+    schema: {
+      params: {
+        id: Type.String({ format: "uuid" }),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const reactions = await prisma.reactions.findMany({
+        where: { messageId: id },
+      });
+      reply.send(reactions);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+// delete reactions
+
+app.delete<GetReactionType>(
+  "/reactions/:id",
+  {
+    schema: {
+      params: {
+        id: Type.String({ format: "uuid" }),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const deleteReaction = await prisma.reactions.delete({
+        where: { id },
+      });
+      reply.send(`Sucessfully deleted: ${id}`);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
+//post reactions
+const CreateReactionModel = Type.Object({
+  emoji: Type.String(),
+});
+
+app.post<{ Body: Static<typeof CreateReactionModel>; Params: { id: string } }>(
+  "/messages/:id/reactions",
+  {
+    schema: {
+      body: CreateReactionModel,
+      params: {
+        id: Type.String({ format: "uuid" }),
+      },
+    },
+  },
+  async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const reaction = await prisma.reactions.create({
+        data: {
+          ...request.body,
+          message: { connect: { id: id } },
+        },
+      });
+      reply.send(reaction.emoji);
+    } catch (err) {
+      send500(reply);
+    }
+  }
+);
+
 const start = async () => {
   try {
     await app.listen(8000, "0.0.0.0");

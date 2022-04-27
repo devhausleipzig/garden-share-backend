@@ -1,12 +1,13 @@
-export function validateMonth(start: Date, end: Date, params: number) {
+export function validateMonth(start: Date, end: Date, month: number) {
   const bookedStartMonth = start.getMonth();
   const bookedEndMonth = end.getMonth();
-  let bookedMonth;
+  let bookedMonth: number = 0;
   if (bookedStartMonth === bookedEndMonth) {
     bookedMonth = bookedStartMonth;
   }
-
-  return month + 1;
+  if (bookedMonth === month) {
+    return month + 1;
+  }
 }
 
 // start

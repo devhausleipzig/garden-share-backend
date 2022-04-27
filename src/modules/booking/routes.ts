@@ -38,7 +38,11 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: { id: Type.String() },
         description: "POSTs a new booking",
         tags: ["Booking"],
+        headers: {
+          Authorization: Type.String(),
+        },
       },
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const {

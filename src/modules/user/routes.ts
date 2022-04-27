@@ -116,7 +116,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "DELETEs a specific user based on the user id",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;

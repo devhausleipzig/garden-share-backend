@@ -27,19 +27,19 @@ glob.sync("**/routes.ts").forEach((modulePath) => {
   if (router) {
     allRouters.push(router);
   } else {
-    console.log(`No router defined in ${module.dir}`);
+    console.log(`No router exported in ${module.dir}`);
   }
 
   if (tags) {
     allTags.push(...tags);
   } else {
-    console.log(`No tags defined in ${module.dir}`);
+    console.log(`No tags exported in ${module.dir}`);
   }
 
   if (models) {
     allModels = { ...allModels, ...models };
   } else {
-    console.log(`No models defined in ${module.dir}`);
+    console.log(`No models exported in ${module.dir}`);
   }
 });
 

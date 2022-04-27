@@ -25,7 +25,6 @@ export const tags = [
 export const models = { CreateBookingModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
-  // booking endpoints
 
   fastify.post<{
     Body: Static<typeof CreateBookingModel>;

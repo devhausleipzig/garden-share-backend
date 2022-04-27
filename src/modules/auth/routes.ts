@@ -1,5 +1,6 @@
 import { send500 } from "../../utils/errors";
 import { FastifyInstance, RouteOptions, Static, prisma } from "../base.routes";
+
 import { LoginModel, SignupModel } from "./models";
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
@@ -7,11 +8,11 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/signup",
     {
       schema: {
-        body: SignupModel,
+        body: SignupModel
       },
     },
     async (request, reply) => {
-      const { email } = request.body;
+      const { email, firstName, lastName } = request.body;
       try {
         const loginEmail = await prisma.user.findUnique({
           where: {
@@ -24,13 +25,16 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           });
         const user = await prisma.user.create({
           data: {
-            ...request.body,
+            email,
+            firstName,
+            lastName,
             passwordHash: "placeholder",
             passwordSalt: "salt",
           },
         });
         reply.send(user.identifier);
       } catch (err) {
+        fastify.log.error(err)
         send500(reply);
       }
     }
@@ -44,23 +48,27 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       },
     },
     async (request, reply) => {
-      const { email, password } = request.body;
+      const { email, passwordHash } = request.body;
       try {
         const user = await prisma.user.findUnique({
           where: {
-            email,
+            email
           },
         });
         if (!user)
           return reply.status(404).send({
             message: "User not found!",
           });
-        if (password !== user.passwordHash)
+        if (passwordHash !== user.passwordHash)
           return reply.status(401).send({
             message: "Incorrect Password",
           });
-        reply.status(200).send(user);
+
+        const token = fastify.jwt.sign({ identifier: user.identifier, email: user.email, role: user.role})
+        
+        reply.status(200).send({ token });
       } catch (err) {
+        fastify.log.error(err)
         send500(reply);
       }
     }

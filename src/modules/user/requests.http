@@ -6,7 +6,7 @@ Content-Type: application/json
 	"firstName": "John",
 	"lastName": "Doe",
 	"passwordHash": "placeholder",
-	"passwordSalt": "101010101010101",
+	"passwordSalt": "101010101010101"
 }
 
 ###

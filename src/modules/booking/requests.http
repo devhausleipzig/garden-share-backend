@@ -1,29 +1,31 @@
-POST http://localhost:8000/user/847d3942-50da-4724-bfb7-9fd8edcd2265/bookings
+POST http://localhost:8000/user/72763d83-6fed-4e41-9d18-a160344ec3b5/bookings
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiNzI3NjNkODMtNmZlZC00ZTQxLTlkMTgtYTE2MDM0NGVjM2I1IiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTMwM0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDcwMzI4fQ.u2F_EdJJP5UOdFqnRD0uXtsT_LXZBxBqG8UyEQu0_xI
 
 {
     "title": "fettes Grillen",
     "start": "2022-04-25T16:41:44.324Z",
   "end": "2022-04-25T17:51:44.324Z",
   "tasks": [],
-  "bookedBy": "847d3942-50da-4724-bfb7-9fd8edcd2265"
+  "bookedBy": "72763d83-6fed-4e41-9d18-a160344ec3b5"
 }
+
 
 ###
 
 GET http://localhost:8000/bookings 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMjk5ZWQ1YzgtMGI2Zi00ZmEzLWE2OTMtZDQ0ZDIwOTBhYTZkIiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTEwN0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDYyNjEyfQ.CtQoIBMpZWNmGCSRmnrMTdNphs2Y3uM1MFqKdpv9QBY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiNzI3NjNkODMtNmZlZC00ZTQxLTlkMTgtYTE2MDM0NGVjM2I1IiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTMwM0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDcwMzI4fQ.u2F_EdJJP5UOdFqnRD0uXtsT_LXZBxBqG8UyEQu0_xI
 
 
 ###
 
 GET http://localhost:8000/bookings?date=2022-04-26
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMjk5ZWQ1YzgtMGI2Zi00ZmEzLWE2OTMtZDQ0ZDIwOTBhYTZkIiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTEwN0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDYyNjEyfQ.CtQoIBMpZWNmGCSRmnrMTdNphs2Y3uM1MFqKdpv9QBY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiNzI3NjNkODMtNmZlZC00ZTQxLTlkMTgtYTE2MDM0NGVjM2I1IiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTMwM0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDcwMzI4fQ.u2F_EdJJP5UOdFqnRD0uXtsT_LXZBxBqG8UyEQu0_xI
 
 ###
 
 DELETE http://localhost:8000/booking/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMjk5ZWQ1YzgtMGI2Zi00ZmEzLWE2OTMtZDQ0ZDIwOTBhYTZkIiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTEwN0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDYyNjEyfQ.CtQoIBMpZWNmGCSRmnrMTdNphs2Y3uM1MFqKdpv9QBY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiNzI3NjNkODMtNmZlZC00ZTQxLTlkMTgtYTE2MDM0NGVjM2I1IiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTMwM0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDcwMzI4fQ.u2F_EdJJP5UOdFqnRD0uXtsT_LXZBxBqG8UyEQu0_xI
 
 ###
 

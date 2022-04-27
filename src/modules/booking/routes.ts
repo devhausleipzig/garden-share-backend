@@ -13,6 +13,7 @@ import { send500 } from "../../utils/errors";
 import { checkOneHourApart } from "../../utils/hour";
 import { Message } from "@prisma/client";
 import { getDaysInMonth } from "../../utils/month";
+import { dateRange } from "../../utils/day";
 
 export const tags = [
   {
@@ -127,23 +128,26 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       const { month } = request.query;
       let status: string[] = [];
       const days = getDaysInMonth(new Date().getFullYear(), month - 1);
-      days.forEach(async (day) => {
-        try {
-          const availability = await prisma.booking.findMany();
-          if ((availability.length = 0)) {
-            status.push("free");
+      await Promise.all(
+        days.map(async (day) => {
+          try {
+            const availability = await dateRange(day.toISOString());
+            console.log(availability);
+            if (availability.length === 0) {
+              return status.push("free");
+            }
+            if (availability.length < 12) {
+              return status.push("partial");
+            }
+            if (availability.length === 12) {
+              return status.push("full");
+            }
+          } catch (err) {
+            console.log(err);
+            send500(reply);
           }
-          if (availability.length < 12) {
-            status.push("partial");
-          }
-          if ((availability.length = 12)) {
-            status.push("full");
-          }
-        } catch (err) {
-          console.log(err);
-          send500(reply);
-        }
-      });
+        })
+      );
       reply.send(status);
     }
   );

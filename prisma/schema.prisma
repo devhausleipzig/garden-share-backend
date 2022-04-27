@@ -47,7 +47,6 @@ model Task {
   deadline   DateTime
   steps      String
   repeating  Repeats  @default(NONE)
-  available  Boolean  @default(true)
 }
 
 model Booking {

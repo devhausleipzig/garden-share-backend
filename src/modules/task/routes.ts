@@ -6,8 +6,13 @@ import {
   prisma,
 } from "../base.routes";
 import { send500 } from "../../utils/errors";
-import { CreateTaskModel, GetAvailableTaskModel } from "./models";
+import {
+  CreateTaskModel,
+  GetAvailableTaskModel,
+  UpdateTaskModel,
+} from "./models";
 import { Task } from "@prisma/client";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 type dueQuery = "today" | "week";
 
@@ -93,6 +98,79 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
         reply.send(tasks);
       } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  fastify.post<{
+    Body: Static<typeof CreateTaskModel>;
+  }>(
+    "/task",
+    {
+      schema: {
+        body: CreateTaskModel,
+      },
+    },
+    async (req, reply) => {
+      const { steps, ...rest } = req.body;
+      try {
+        const newTask = await prisma.task.create({
+          data: {
+            ...rest,
+            steps: String(steps),
+          },
+        });
+        reply.code(201).send(newTask);
+      } catch (error) {
+        reply.code(500).send(error);
+      }
+    }
+  );
+
+  fastify.delete<{ Params: { id: string } }>(
+    "/task/:id",
+    async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const deleteTask = await prisma.task.delete({
+          where: { identifier: id },
+        });
+        return reply.send("Task successfully deleted.");
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  fastify.put<{
+    Body: Static<typeof UpdateTaskModel>;
+    Params: { id: string };
+  }>(
+    "/task/:id",
+    {
+      schema: {
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+        body: UpdateTaskModel,
+      },
+    },
+    async (req, reply) => {
+      const { id } = req.params;
+      //  const {type, deadline, steps, repeating, available} = req.body;
+      const { steps, ...rest } = req.body;
+      try {
+        const updatedTask = await prisma.task.update({
+          data: {
+            ...rest,
+            steps: String(steps),
+          },
+          where: {
+            identifier: id,
+          },
+        });
+      } catch (error) {
         send500(reply);
       }
     }

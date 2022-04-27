@@ -6,18 +6,18 @@ import {
   prisma,
 } from "../base.routes";
 import { send500 } from "../../utils/errors";
-import { CreateTaskModel } from "./models";
+import { CreateTaskModel, GetAvailableTaskModel } from "./models";
 import { Task } from "@prisma/client";
 
 type dueQuery = "today" | "week";
 
 export const tags = [
   {
-    name: "Message",
-    description: "Example description for message-related endpoints",
+    name: "Tasks",
+    description: "Example description for task-related endpoints",
   },
 ];
-export const models = [CreateTaskModel];
+export const models = [CreateTaskModel, GetAvailableTaskModel];
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.get<{ Querystring: { limit: number; due: dueQuery } }>(
@@ -57,6 +57,41 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           });
         }
         reply.status(200).send(tasks);
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  fastify.get<{
+    Body: Static<typeof GetAvailableTaskModel>;
+    Querystring: { available: boolean };
+  }>(
+    "/tasks",
+    {
+      schema: {
+        querystring: { available: Type.Boolean() },
+        description:
+          "GETs you all available tasks based on wether a task is booked or not",
+        tags: ["Tasks"],
+      },
+    },
+    async (request, reply) => {
+      const { available } = request.query;
+
+      try {
+        let tasks: Task[];
+        if (available === undefined) {
+          tasks = await prisma.task.findMany();
+        } else {
+          tasks = await prisma.task.findMany({
+            where: {
+              bookingId: available ? { not: null } : { equals: null },
+            },
+          });
+        }
+
+        reply.send(tasks);
       } catch (err) {
         send500(reply);
       }

@@ -10,12 +10,15 @@ import {
 // local imports
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
-import { checkOneHourApart } from "../../utils/date";
+import { checkOneHourApart } from "../../utils/hour";
+import { Message } from "@prisma/client";
+import { getDaysInMonth } from "../../utils/month";
+import { dateRange } from "../../utils/day";
 
 export const tags = [
   {
     name: "Booking",
-    description: "Example description for user-related endpoints",
+    description: "Here you will find details to all booking-related endpoints",
   },
 ];
 
@@ -31,29 +34,59 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         body: CreateBookingModel,
+        params: { id: Type.String() },
+        description: "POSTs a new booking",
+        tags: ["Booking"],
       },
     },
     async (request, reply) => {
-      const { bookedBy, tasks, ...rest } = request.body;
+      const {
+        bookedBy,
+        tasks,
+        end,
+        start,
+        message,
+        overnight,
+        private: privateBooking,
+        published,
+        title,
+      } = request.body;
       const { id } = request.params;
-      if (rest.start >= rest.end) {
+      if (start >= end) {
         return reply.status(400).send("End time must be after start time.");
       }
-      if (!checkOneHourApart(new Date(rest.start), new Date(rest.end))) {
+      if (!checkOneHourApart(new Date(start), new Date(end))) {
         return reply
           .status(400)
           .send("Start and end time need to be one hour apart.");
       }
       try {
+        let fetchedMessage: Message | undefined = undefined;
+        if (message?.title && message?.content) {
+          fetchedMessage = await prisma.message.create({
+            data: {
+              title: message.title,
+              content: message.content,
+              userId: id,
+            },
+          });
+        }
         const booking = await prisma.booking.create({
           data: {
-            ...rest,
-            bookedBy: { connect: { identifier: id } },
+            end,
+            start,
+            overnight,
+            private: privateBooking,
+            published,
+            title,
+            userId: id,
+            messageId: fetchedMessage?.identifier,
             tasks: { connect: tasks.map((task) => ({ identifier: task })) },
           },
         });
         reply.send(booking.identifier);
       } catch (err) {
+        console.log(err);
         send500(reply);
       }
     }
@@ -71,6 +104,83 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         //   return reply.send("Booking not found.");
         // }
         return reply.send("Booking successfully deleted.");
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  // ----- Availability ----- ///
+
+  fastify.get<{ Querystring: { month: number } }>(
+    "/availability",
+    {
+      schema: {
+        querystring: {
+          month: Type.Number({ minimum: 1, maximum: 12 }),
+        },
+        description: "GETs the availability for a month",
+        tags: ["Booking"],
+      },
+    },
+    async (request, reply) => {
+      const { month } = request.query;
+      let status: string[] = [];
+      const days = getDaysInMonth(new Date().getFullYear(), month - 1);
+      await Promise.all(
+        days.map(async (day) => {
+          try {
+            const availability = await dateRange(day.toISOString());
+            console.log(availability);
+            if (availability.length === 0) {
+              return status.push("free");
+            }
+            if (availability.length < 12) {
+              return status.push("partial");
+            }
+            if (availability.length === 12) {
+              return status.push("full");
+            }
+          } catch (err) {
+            console.log(err);
+            send500(reply);
+          }
+        })
+      );
+      reply.send(status);
+    }
+  );
+
+  //  GET BOOKINGS BY DATE
+
+  fastify.get<{ Querystring: { date: string } }>(
+    "/bookings",
+    {
+      schema: {
+        querystring: {
+          date: Type.String({ format: "date" }),
+        },
+        description: "GETs you events by date",
+        tags: ["Booking"],
+      },
+    },
+    async (request, reply) => {
+      const { date } = request.query;
+      const startOfDay = new Date(date);
+
+      startOfDay.setUTCHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+      try {
+        const slots = await prisma.booking.findMany({
+          where: {
+            start: {
+              lte: endOfDay,
+              gte: startOfDay,
+            },
+          },
+        });
+        reply.status(200).send(slots);
       } catch (err) {
         send500(reply);
       }

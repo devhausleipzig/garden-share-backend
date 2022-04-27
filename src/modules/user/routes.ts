@@ -18,15 +18,15 @@ export const tags = [
   },
 ];
 
-export const models = { CreateUserModel };
+export const models = { CreateUserModel, UpdateUserModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.get(
     "/users",
     {
       schema: {
-        description: "",
-        tags: [],
+        description: "GETs you all users",
+        tags: ["User"],
         headers: {
           authorization: Type.String()
         }
@@ -48,8 +48,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/users/:id",
     {
       schema: {
-        description: "",
-        tags: [],
+        description: "GETs you a specific user based on the user id",
+        tags: ["User"],
         params: {
           id: Type.String({ format: "uuid" }),
         },
@@ -77,6 +77,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           id: Type.String({ format: "uuid" }),
         },
         body: UpdateUserModel,
+        description: "PUTs (updates) an already exising user",
+        tags: ["User"],
       },
     },
     async (request, reply) => {
@@ -102,6 +104,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        description: "DELETEs a specific user based on the user id",
+        tags: ["User"],
       },
     },
     async (request, reply) => {
@@ -122,6 +126,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         body: CreateUserModel,
+        description: "POSTs (i.e. creates) a new user",
+        tags: ["User"],
       },
     },
     async (request, reply) => {

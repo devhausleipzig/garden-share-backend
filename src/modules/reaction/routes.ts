@@ -10,7 +10,7 @@ import { CreateReactionModel } from "./models";
 
 export const tags = [
   {
-    name: "Message",
+    name: "Reactions",
     description: "Example description for message-related endpoints",
   },
 ];
@@ -31,6 +31,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        description: "GETs you all reactions related to a specific user",
+        tags: ["Reactions"],
       },
     },
     async (request, reply) => {
@@ -57,6 +59,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        description: "POSTs a new reaction based on the message id",
+        tags: ["Reactions"],
       },
     },
     async (request, reply) => {
@@ -82,6 +86,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        description: "DELETEs a specific reaction",
+        tags: ["Reactions"],
       },
     },
     async (request, reply) => {

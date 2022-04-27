@@ -1,0 +1,15 @@
+POST http://localhost:8000/user/847d3942-50da-4724-bfb7-9fd8edcd2265/bookings
+Content-Type: application/json
+
+{
+    "title": "fettes Grillen",
+    "start": "2022-04-25T16:41:44.324Z",
+  "end": "2022-04-25T17:51:44.324Z",
+  "tasks": [],
+  "bookedBy": "847d3942-50da-4724-bfb7-9fd8edcd2265"
+}
+
+###
+
+GET http://localhost:8000/bookings?date=2022-04-26
+

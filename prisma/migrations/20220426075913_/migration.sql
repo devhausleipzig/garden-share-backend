@@ -31,7 +31,11 @@ CREATE TABLE "Message" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "image" TEXT,
+<<<<<<< HEAD:prisma/migrations/20220426075913_/migration.sql
+    "authorId" TEXT NOT NULL,
+=======
     "userId" TEXT,
+>>>>>>> dev:prisma/migrations/20220426081850_/migration.sql
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("identifier")
 );

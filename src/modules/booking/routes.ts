@@ -11,11 +11,8 @@ import {
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
 import { checkOneHourApart } from "../../utils/date";
-<<<<<<< HEAD
-import { validateMonth } from "../../utils/month";
-=======
 import { Message } from "@prisma/client";
->>>>>>> dev
+import { getDaysInMonth, validateMonth } from "../../utils/month";
 
 export const tags = [
   {
@@ -111,7 +108,6 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     }
   );
 
-<<<<<<< HEAD
   // ----- Availability ----- ///
 
   fastify.get<{ Querystring: { month: number } }>(
@@ -120,52 +116,37 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       schema: {
         querystring: {
           month: Type.Number(),
-=======
-  // ----- Events ----- //
-
-  fastify.get<{ Querystring: { limit: number } }>(
-    "/events",
-    {
-      schema: {
-        querystring: {
-          limit: Type.Number(),
->>>>>>> dev
         },
       },
     },
     async (request, reply) => {
-<<<<<<< HEAD
       const { month } = request.query;
-      try {
-        // if(!validateMonth())
-        const availability = await prisma.booking.findMany({
-          where: {
-            start: {
-              equals: {},
-            },
-          },
-        });
-        reply.status(200).send(availability);
-      } catch (err) {
-        send500(reply);
-=======
-      const { limit } = request.query;
-      try {
-        const events = await prisma.booking.findMany({
-          where: {
-            private: false,
-          },
-          take: limit,
-          orderBy: {
-            start: "desc",
-          },
-        });
-        reply.status(200).send(events);
-      } catch (err) {
-        send500(reply);
-        console.log(err);
->>>>>>> dev
-      }
+
+      // [{
+      //  date: days[]
+      //  status: free | partial | full
+      //  }]
+      // array von tagen, forEach
+      let availability = [];
+      let status = [];
+      getDaysInMonth(2022, month - 1);
+      days.forEach(async (element, index) => {
+        try {
+          availability = await prisma.booking.findMany();
+        } catch (err) {
+          console.log(err);
+          send500(reply);
+        }
+        if ((availability.length = 0)) {
+          status.push("free");
+        }
+        if (availability.length < 12) {
+          status.push("partial");
+        }
+        if ((availability.length = 12)) {
+          status.push("full");
+        }
+      });
     }
   );
 }

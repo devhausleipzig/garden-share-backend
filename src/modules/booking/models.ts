@@ -1,4 +1,5 @@
 import { Type } from "../base.models";
+import { CreateMessageModel } from "../message/models";
 
 export const CreateBookingModel = Type.Object({
   start: Type.String({ format: "date-time" }),
@@ -9,5 +10,5 @@ export const CreateBookingModel = Type.Object({
   title: Type.Optional(Type.String()),
   tasks: Type.Array(Type.String({ format: "uuid" })),
   bookedBy: Type.String({ format: "uuid" }),
-  message: Type.Optional(Type.String({ format: "uuid" })),
+  message: Type.Optional(CreateMessageModel),
 });

@@ -6,7 +6,7 @@ export function validateMonth(start: Date, end: Date, month: number) {
     bookedMonth = bookedStartMonth;
   }
   if (bookedMonth === month) {
-    return month + 1;
+    return bookedMonth + 1;
   }
 }
 

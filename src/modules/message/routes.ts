@@ -11,7 +11,7 @@ import { CreateMessageModel } from "./models";
 export const tags = [
   {
     name: "Message",
-    description: "Example description for message-related endpoints",
+    description: "Get messages with limit query param + post a message",
   },
 ];
 
@@ -25,6 +25,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         querystring: {
           limit: Type.Number(),
         },
+        description: "Get messages with limit query param",
+        tags: ["Message"],
       },
     },
     async (request, reply) => {
@@ -48,6 +50,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         body: CreateMessageModel,
+        description: "Post a message",
+        tags: ["Message"],
       },
     },
     async (request, reply) => {

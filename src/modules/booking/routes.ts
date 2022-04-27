@@ -10,9 +10,9 @@ import {
 // local imports
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
-import { checkOneHourApart } from "../../utils/date";
+import { checkOneHourApart } from "../../utils/hour";
 import { Message } from "@prisma/client";
-import { getDaysInMonth, validateMonth } from "../../utils/month";
+import { getDaysInMonth } from "../../utils/month";
 
 export const tags = [
   {
@@ -117,42 +117,39 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         querystring: {
-          month: Type.Number(),
+          month: Type.Number({ minimum: 1, maximum: 12 }),
         },
-        description: "GETs you a certain number of events based on the limit",
+        description: "GETs the availability for a month",
         tags: ["Booking"],
       },
     },
     async (request, reply) => {
       const { month } = request.query;
-
-      // [{
-      //  date: days[]
-      //  status: free | partial | full
-      //  }]
-      // array von tagen, forEach
-      let availability = [];
-      let status = [];
-      getDaysInMonth(2022, month - 1);
-      days.forEach(async (element, index) => {
+      let status: string[] = [];
+      const days = getDaysInMonth(new Date().getFullYear(), month - 1);
+      days.forEach(async (day) => {
         try {
-          availability = await prisma.booking.findMany();
+          const availability = await prisma.booking.findMany();
+          if ((availability.length = 0)) {
+            status.push("free");
+          }
+          if (availability.length < 12) {
+            status.push("partial");
+          }
+          if ((availability.length = 12)) {
+            status.push("full");
+          }
         } catch (err) {
           console.log(err);
           send500(reply);
         }
-        if ((availability.length = 0)) {
-          status.push("free");
-        }
-        if (availability.length < 12) {
-          status.push("partial");
-        }
-        if ((availability.length = 12)) {
-          status.push("full");
-        }
       });
+      reply.send(status);
     }
   );
+
+  //  GET BOOKINGS BY DATE
+
   fastify.get<{ Querystring: { date: string } }>(
     "/bookings",
     {

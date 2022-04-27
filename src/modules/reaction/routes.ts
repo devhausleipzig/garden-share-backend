@@ -33,7 +33,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs you all reactions related to a specific user",
         tags: ["Reactions"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -61,6 +66,11 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "POSTs a new reaction based on the message id",
         tags: ["Reactions"],
+        headers: {
+          authorization: Type.String(),
+        },
+        //@ts-ignore
+        onRequest: fastify.authenticate,
       },
     },
     async (request, reply) => {
@@ -88,6 +98,11 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "DELETEs a specific reaction",
         tags: ["Reactions"],
+        headers: {
+          authorization: Type.String(),
+        },
+        //@ts-ignore
+        onRequest: fastify.authenticate,
       },
     },
     async (request, reply) => {

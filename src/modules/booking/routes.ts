@@ -16,7 +16,7 @@ import { Message } from "@prisma/client";
 export const tags = [
   {
     name: "Booking",
-    description: "Example description for user-related endpoints",
+    description: "Here you will find details to all booking-related endpoints",
   },
 ];
 
@@ -34,6 +34,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       schema: {
         body: CreateBookingModel,
         params: { id: Type.String() },
+        description: "POSTs a new booking",
+        tags: ["Booking"],
       },
     },
     async (request, reply) => {
@@ -116,6 +118,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         querystring: {
           limit: Type.Number(),
         },
+        description: "GETs you a certain number of events based on the limit",
+        tags: ["Booking"],
       },
     },
     async (request, reply) => {
@@ -134,6 +138,39 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       } catch (err) {
         send500(reply);
         console.log(err);
+      }
+    }
+  );
+  fastify.get<{ Querystring: { date: string } }>(
+    "/bookings",
+    {
+      schema: {
+        querystring: {
+          date: Type.String({ format: "date" }),
+        },
+        description: "GETs you events by date",
+        tags: ["Booking"],
+      },
+    },
+    async (request, reply) => {
+      const { date } = request.query;
+      const startOfDay = new Date(date);
+
+      startOfDay.setUTCHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+      try {
+        const slots = await prisma.booking.findMany({
+          where: {
+            start: {
+              lte: endOfDay,
+              gte: startOfDay,
+            },
+          },
+        });
+        reply.status(200).send(slots);
+      } catch (err) {
+        send500(reply);
       }
     }
   );

@@ -11,6 +11,7 @@ import {
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
 import { checkOneHourApart } from "../../utils/date";
+import { validateMonth } from "../../utils/month";
 
 export const tags = [
   {
@@ -72,6 +73,35 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         //   return reply.send("Booking not found.");
         // }
         return reply.send("Booking successfully deleted.");
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  // ----- Availability ----- ///
+
+  fastify.get<{ Querystring: { month: number } }>(
+    "/availability",
+    {
+      schema: {
+        querystring: {
+          month: Type.Number(),
+        },
+      },
+    },
+    async (request, reply) => {
+      const { month } = request.query;
+      try {
+        // if(!validateMonth())
+        const availability = await prisma.booking.findMany({
+          where: {
+            start: {
+              equals: {},
+            },
+          },
+        });
+        reply.status(200).send(availability);
       } catch (err) {
         send500(reply);
       }

@@ -181,7 +181,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         description: "GETs you events by date",
         tags: ["Booking"],
         headers: {
-          authorization: Type.toString(),
+          authorization: Type.String(),
         },
       },
       //@ts-ignore

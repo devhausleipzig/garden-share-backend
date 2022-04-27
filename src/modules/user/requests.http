@@ -2,9 +2,14 @@ POST http://localhost:8000/users
 Content-Type: application/json
 
 {
-  "email": "danielmcatee@me.com",
-  "firstName": "Dan",
-  "lastName": "McAtee",
-  "passwordHash": "password",
-  "passwordSalt": "salt"
+	"email": "testexample303@example.com",
+	"firstName": "John",
+	"lastName": "Doe",
+	"passwordHash": "secretpassword",
+	"passwordSalt": "101010101010101"
 }
+
+###
+
+GET http://localhost:8000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMjk5ZWQ1YzgtMGI2Zi00ZmEzLWE2OTMtZDQ0ZDIwOTBhYTZkIiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTEwN0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDYyNjEyfQ.CtQoIBMpZWNmGCSRmnrMTdNphs2Y3uM1MFqKdpv9QBY

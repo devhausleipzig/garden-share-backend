@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "nodemon",
     "start": "npx prismix && npx prisma format && npx prisma migrate dev && ts-node src/server.ts",
-    "db:push": "npx prisma db push",
+    "db:push": "npx prismix && npx prisma db push",
     "db:migrate": "npx prismix && npx prisma format && npx prisma migrate dev",
     "db:studio": "npx prisma studio"
   },

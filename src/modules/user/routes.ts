@@ -9,7 +9,7 @@ import {
 
 // local imports
 import { CreateUserModel, UpdateRoleModel, UpdateUserModel } from "./models";
-import { send500 } from "../../utils/errors";
+import { send401, send500 } from "../../utils/errors";
 
 export const tags = [
   {
@@ -143,6 +143,10 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     async (request, reply) => {
       const { id } = request.params;
       const { role } = request.body;
+      // @ts-ignore
+      if (!request.user.role === "ADMIN") {
+        send401(reply);
+      }
       try {
         const updateRole = await prisma.user.update({
           where: { identifier: id },

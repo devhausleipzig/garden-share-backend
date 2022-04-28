@@ -15,6 +15,7 @@ model User {
   reactions      Reaction[] @relation(name: "ReactionToUser")
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  approved       Boolean    @default(false)
   role           Role       @default(USER)
   email          String     @unique
   firstName      String

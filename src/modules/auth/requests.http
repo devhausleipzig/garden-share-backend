@@ -8,12 +8,25 @@ Content-Type: application/json
 	"passwordHash": "secretpassword"
 }
 
-###
+### LOGIN - APPROVED 
 
 POST http://localhost:8000/login
 Content-Type: application/json
 
 {
 	"email": "testexample107@example.com",
-	"passwordHash": "placeholder"
+	"passwordHash": "placeholder",
+	"approved": "true"
 }
+
+### LOGIN - UNAPPROVED 
+
+POST http://localhost:8000/login
+Content-Type: application/json
+
+{
+	"email": "testexample107@example.com",
+	"passwordHash": "placeholder",
+	"approved": "false"
+}
+

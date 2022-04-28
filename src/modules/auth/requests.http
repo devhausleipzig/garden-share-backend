@@ -14,6 +14,6 @@ POST http://localhost:8000/login
 Content-Type: application/json
 
 {
-	"email": "testexample107@example.com",
-	"passwordHash": "placeholder"
+	"email": "test@testament.de",
+	"passwordHash": "1234567"
 }

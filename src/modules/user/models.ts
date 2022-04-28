@@ -20,3 +20,6 @@ export const UpdateUserModel = Type.Object({
   lastName: Type.Optional(Type.String({ minLength: 2 })),
   password: Type.Optional(Type.String({ minLength: 6 })),
 });
+export const ApproveUserModel = Type.Object({
+  approve: Type.Boolean(),
+});

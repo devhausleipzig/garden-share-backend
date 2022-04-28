@@ -142,9 +142,18 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     },
     async (request, reply) => {
       const { id } = request.params;
-      const { role } = request.body;
       // @ts-ignore
-      if (!request.user.role === "ADMIN") {
+      const tokenId = request.user.identifier;
+      const requestUser = await prisma.user.findUnique({
+        where: {
+          identifier: tokenId,
+        },
+      });
+      if (requestUser?.identifier !== tokenId) {
+        send401(reply);
+      }
+      const { role } = request.body;
+      if (requestUser?.role !== "ADMIN") {
         send401(reply);
       }
       try {

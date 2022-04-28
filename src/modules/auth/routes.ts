@@ -55,6 +55,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             email,
           },
         });
+        console.log(user?.approved);
         if (!user)
           return reply.status(404).send({
             message: "User not found!",
@@ -64,7 +65,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             message: "Incorrect Password",
           });
         // @ts-ignore
-        if (!request.user.approved === true)
+        if (user.approved !== true)
           return reply.status(401).send({
             message: "User not approved!",
           });

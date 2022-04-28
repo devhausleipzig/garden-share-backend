@@ -155,17 +155,22 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "PUTs sign up approval from the admin for a specific User",
         tags: ["User"],
-        headers: { authentication: Type.String() },
+        headers: { authorization: Type.String() },
       },
       //@ts-ignore
       onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
-      console.log(request.user);
-
-      //@ts-ignore
-      if (!request.user.role === "ADMIN") {
+      // @ts-ignore
+      const tokenId = request.user.identifier;
+      const requestUser = await prisma.user.findUnique({
+        where: { identifier: tokenId },
+      });
+      if (requestUser?.identifier !== tokenId) {
+        send401(reply);
+      }
+      if (requestUser?.role !== "ADMIN") {
         send401(reply);
       }
       try {

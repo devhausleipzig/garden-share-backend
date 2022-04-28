@@ -63,7 +63,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           return reply.status(401).send({
             message: "Incorrect Password",
           });
-        if (request.user.approved === false)
+        // @ts-ignore
+        if (!request.user.approved === true)
           return reply.status(401).send({
             message: "User not approved!",
           });

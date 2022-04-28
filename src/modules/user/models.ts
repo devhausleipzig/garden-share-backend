@@ -1,4 +1,5 @@
 // third-party imports
+import { Role } from "@prisma/client";
 import { Type } from "@sinclair/typebox";
 
 export const CreateUserModel = Type.Object({
@@ -19,4 +20,8 @@ export const UpdateUserModel = Type.Object({
   firstName: Type.Optional(Type.String({ minLength: 2 })),
   lastName: Type.Optional(Type.String({ minLength: 2 })),
   password: Type.Optional(Type.String({ minLength: 6 })),
+});
+
+export const UpdateRoleModel = Type.Object({
+  role: Type.Enum(Role),
 });

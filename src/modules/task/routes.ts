@@ -25,44 +25,53 @@ export const tags = [
 export const models = [CreateTaskModel, GetAvailableTaskModel];
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
-  fastify.get<{ Querystring: { limit: number; due: dueQuery } }>(
+  fastify.get<{ Querystring: { limit: number; due: dueQuery; available: boolean } }>(
     "/task",
     {
       schema: {
         querystring: {
+          available: Type.Boolean(),
           limit: Type.Number(),
           due: Type.Union([Type.Literal("today"), Type.Literal("week")]),
         },
-        description: "GETs you a certain number of tasks sorted by due date",
-        tags: ["Tasks"],
+        description: "GETs you a certain number of tasks sorted by due date and if it's booked or not", 
+       tags: ["Tasks"],
       },
     },
     async (request, reply) => {
-      const { limit, due } = request.query;
+      const { limit, due, available } = request.query;
       const date = new Date();
       let date2 = new Date();
       date2.setDate(date2.getDate() + 7);
       const todaysDate = date.toISOString().substring(0, 10);
       const oneWeek = date2.toISOString().substring(0, 10);
-      console.log(todaysDate, oneWeek);
+     
       try {
         let tasks: Task[];
-        if (!due) {
-          tasks = await prisma.task.findMany();
-        } else {
-          tasks = await prisma.task.findMany({
-            where: {
-              deadline: {
-                lte: due === "today" ? new Date(todaysDate) : new Date(oneWeek),
-                gte: new Date(todaysDate),
-              },
+        let whereClauses = {}
+        if (due) {
+          whereClauses = {
+            ...whereClauses,
+            deadline: {
+              lte: due === "today" ? new Date(todaysDate) : new Date(oneWeek),
+              gte: new Date(todaysDate),
             },
-            take: limit,
-            orderBy: {
-              createdAt: "desc",
-            },
-          });
+          }
+         }
+        if (available != undefined) {
+          whereClauses = {
+            ...whereClauses,
+            bookingId: available ? { not: null } : { equals: null },
+          }
         }
+        
+          tasks = await prisma.task.findMany({
+          where: whereClauses,
+          take: limit,
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
         reply.status(200).send(tasks);
       } catch (err) {
         send500(reply);
@@ -70,40 +79,6 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     }
   );
 
-  fastify.get<{
-    Body: Static<typeof GetAvailableTaskModel>;
-    Querystring: { available: boolean };
-  }>(
-    "/tasks",
-    {
-      schema: {
-        querystring: { available: Type.Boolean() },
-        description:
-          "GETs you all available tasks based on wether a task is booked or not",
-        tags: ["Tasks"],
-      },
-    },
-    async (request, reply) => {
-      const { available } = request.query;
-
-      try {
-        let tasks: Task[];
-        if (available === undefined) {
-          tasks = await prisma.task.findMany();
-        } else {
-          tasks = await prisma.task.findMany({
-            where: {
-              bookingId: available ? { not: null } : { equals: null },
-            },
-          });
-        }
-
-        reply.send(tasks);
-      } catch (err) {
-        send500(reply);
-      }
-    }
-  );
   fastify.post<{
     Body: Static<typeof CreateTaskModel>;
   }>(

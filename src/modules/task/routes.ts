@@ -28,7 +28,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           limit: Type.Number(),
           due: Type.Union([Type.Literal("today"), Type.Literal("week")]),
         },
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { limit, due } = request.query;
@@ -74,8 +79,14 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         description:
           "GETs you all available tasks based on wether a task is booked or not",
         tags: ["Tasks"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
+
     async (request, reply) => {
       const { available } = request.query;
 

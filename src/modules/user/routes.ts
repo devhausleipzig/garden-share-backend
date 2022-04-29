@@ -8,9 +8,14 @@ import {
 } from "../base.routes";
 
 // local imports
-import { ApproveUserModel, CreateUserModel, UpdateUserModel } from "./models";
-import { send401, send500 } from "../../utils/errors";
+import {
+  ApproveUserModel,
+  UpdateRoleModel,
+  CreateUserModel,
+  UpdateUserModel,
+} from "./models";
 import fastify from "fastify";
+import { send401, send500 } from "../../utils/errors";
 
 export const tags = [
   {
@@ -19,7 +24,7 @@ export const tags = [
   },
 ];
 
-export const models = { CreateUserModel, UpdateUserModel };
+export const models = { CreateUserModel, UpdateUserModel, UpdateRoleModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.get(
@@ -54,7 +59,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -80,7 +90,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         body: UpdateUserModel,
         description: "PUTs (updates) an already exising user",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -107,7 +122,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "DELETEs a specific user based on the user id",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -122,6 +142,56 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     }
   );
 
+  // ADMIN CHANGES ROLE
+
+  fastify.put<{ Body: Static<typeof UpdateRoleModel>; Params: { id: string } }>(
+    "/user/:id/role",
+    {
+      schema: {
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+        body: UpdateRoleModel,
+        description: "PUTs (updates) user role (ADMIN only)",
+        tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
+      },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      // @ts-ignore
+      const tokenId = request.user.identifier;
+      const requestUser = await prisma.user.findUnique({
+        where: {
+          identifier: tokenId,
+        },
+      });
+      if (requestUser?.identifier !== tokenId) {
+        send401(reply);
+      }
+      const { role } = request.body;
+      if (requestUser?.role !== "ADMIN") {
+        send401(reply);
+      }
+      try {
+        const updateRole = await prisma.user.update({
+          where: { identifier: id },
+          data: {
+            role,
+          },
+        });
+        reply.status(200).send(updateRole);
+      } catch (err) {
+        console.log(err);
+        send500(reply);
+      }
+    }
+  );
+
   fastify.post<{ Body: Static<typeof CreateUserModel> }>(
     "/users",
     {
@@ -129,7 +199,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         body: CreateUserModel,
         description: "POSTs (i.e. creates) a new user",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       try {

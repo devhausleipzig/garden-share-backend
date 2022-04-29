@@ -1,4 +1,5 @@
 // third-party imports
+import { Role } from "@prisma/client";
 import { Type } from "@sinclair/typebox";
 
 export const CreateUserModel = Type.Object({
@@ -22,4 +23,8 @@ export const UpdateUserModel = Type.Object({
 });
 export const ApproveUserModel = Type.Object({
   approve: Type.Boolean(),
+});
+
+export const UpdateRoleModel = Type.Object({
+  role: Type.Enum(Role),
 });

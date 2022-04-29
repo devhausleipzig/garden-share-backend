@@ -2,6 +2,7 @@
 import { fastify, FastifyReply, FastifyRequest } from "fastify";
 import fastifySwagger from "fastify-swagger";
 import fastifyJwt from 'fastify-jwt';
+import fastifyCors from '@fastify/cors';
 import * as dotenv from 'dotenv';
 
 // local imports
@@ -23,6 +24,10 @@ server.register(fastifySwagger, {
     definitions: models,
   },
 });
+
+server.register(fastifyCors, {
+  origin: true
+})
 
 server.register(fastifyJwt, {
   secret: loadEnv('SESSION_SECRET')

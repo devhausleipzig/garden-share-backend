@@ -114,11 +114,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       },
     },
     async (req, reply) => {
-      const { steps, ...rest } = req.body;
+      const { steps,deadline, ...rest } = req.body;
       try {
         const newTask = await prisma.task.create({
           data: {
             ...rest,
+            deadline: new Date(deadline),
             steps: JSON.stringify(steps),
           },
         });
@@ -160,11 +161,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     async (req, reply) => {
       const { id } = req.params;
       //  const {type, deadline, steps, repeating, available} = req.body;
-      const { steps, ...rest } = req.body;
+      const { steps,deadline, ...rest } = req.body;
       try {
         const updatedTask = await prisma.task.update({
           data: {
             ...rest,
+            deadline: new Date(deadline),
             steps: JSON.stringify(steps),
           },
           where: {

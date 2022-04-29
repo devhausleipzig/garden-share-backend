@@ -13,16 +13,15 @@ import {
 } from "./models";
 import { Task } from "@prisma/client";
 
-
 type dueQuery = "today" | "week";
 
 export const tags = [
   {
     name: "Tasks",
-    description: "Example description for task-related endpoints",
+    description: "Endpoints related to Tasks",
   },
 ];
-export const models = [CreateTaskModel, GetAvailableTaskModel];
+export const models = { CreateTaskModel, GetAvailableTaskModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.get<{
@@ -134,7 +133,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "DELETE: delete the selected Task by 'id' ",
         tags: ["Tasks"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -156,11 +160,18 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/task/:id",
     {
       schema: {
+        description: "modify a task",
+        tags: ["Tasks"],
         params: {
           id: Type.String({ format: "uuid" }),
         },
         body: UpdateTaskModel,
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (req, reply) => {
       const { id } = req.params;

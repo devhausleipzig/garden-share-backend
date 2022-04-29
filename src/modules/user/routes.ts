@@ -8,19 +8,14 @@ import {
 } from "../base.routes";
 
 // local imports
-import {
-  ApproveUserModel,
-  UpdateRoleModel,
-  CreateUserModel,
-  UpdateUserModel,
-} from "./models";
-import fastify from "fastify";
+import { UpdateRoleModel, CreateUserModel, UpdateUserModel } from "./models";
+
 import { send401, send500 } from "../../utils/errors";
 
 export const tags = [
   {
     name: "User",
-    description: "Example description for user-related endpoints",
+    description: "Endpoints related to User",
   },
 ];
 
@@ -252,6 +247,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         const updatedUser = await prisma.user.update({
           where: { identifier: id },
           data: {
+            // @ts-ignore
             approved: true,
           },
         });

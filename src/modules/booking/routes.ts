@@ -18,7 +18,7 @@ import { dateRange } from "../../utils/day";
 export const tags = [
   {
     name: "Booking",
-    description: "Here you will find details to all booking-related endpoints",
+    description: "Endpoints related to Booking",
   },
 ];
 
@@ -100,6 +100,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/booking/:id",
     {
       schema: {
+        description: "Delete a booking",
+        tags: ["Booking"],
         headers: {
           authorization: Type.String(),
         },
@@ -134,12 +136,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs the availability for a month",
         tags: ["Booking"],
-        // headers: {
-        //   authorization: Type.String(),
-        // },
+        headers: {
+          authorization: Type.String(),
+        },
       },
       // @ts-ignore
-      // onRequest: fastify.authenticate,
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { month } = request.query;

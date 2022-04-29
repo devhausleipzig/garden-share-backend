@@ -11,7 +11,7 @@ import { CreateMessageModel } from "./models";
 export const tags = [
   {
     name: "Message",
-    description: "Get messages with limit query param + post a message",
+    description: "Endpoints related to Message",
   },
 ];
 
@@ -27,7 +27,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "Get messages with limit query param",
         tags: ["Message"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { limit } = request.query;
@@ -52,7 +57,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         body: CreateMessageModel,
         description: "Post a message",
         tags: ["Message"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { title, content, userId } = request.body;

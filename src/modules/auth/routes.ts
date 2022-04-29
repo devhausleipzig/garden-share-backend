@@ -3,12 +3,23 @@ import { FastifyInstance, RouteOptions, Static, prisma } from "../base.routes";
 
 import { LoginModel, SignupModel } from "./models";
 
+export const tags = [
+  {
+    name: "Authorization",
+    description: "Endpoints related to Authorization",
+  },
+];
+
+export const models = { LoginModel, SignupModel };
+
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.post<{ Body: Static<typeof SignupModel> }>(
     "/signup",
     {
       schema: {
         body: SignupModel,
+        description: "signup an account",
+        tags: ["Authorization"],
       },
     },
     async (request, reply) => {
@@ -45,6 +56,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     {
       schema: {
         body: LoginModel,
+        description: "Login into account",
+        tags: ["Authorization"],
       },
     },
     async (request, reply) => {
@@ -55,7 +68,6 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             email,
           },
         });
-        console.log(user?.approved);
         if (!user)
           return reply.status(404).send({
             message: "User not found!",

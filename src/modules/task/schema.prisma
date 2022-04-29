@@ -33,7 +33,7 @@ model Task {
     updatedAt DateTime @updatedAt
     type      TaskType
     deadline  DateTime
-    steps     String[]
+    steps     Json
     repeating Repeats  @default(NONE)
     booking   Booking? @relation(fields: [bookingId], references: [identifier])
     bookingId String?

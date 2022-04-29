@@ -118,7 +118,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         const newTask = await prisma.task.create({
           data: {
             ...rest,
-            steps: String(steps),
+            steps: JSON.stringify(steps),
           },
         });
         reply.code(201).send(newTask);
@@ -164,7 +164,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         const updatedTask = await prisma.task.update({
           data: {
             ...rest,
-            steps: String(steps),
+            steps: JSON.stringify(steps),
           },
           where: {
             identifier: id,

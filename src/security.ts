@@ -2,7 +2,7 @@
 
 // third-party imports
 import { FastifyInstance, RouteOptions } from "fastify";
-import fastifyJwt from 'fastify-jwt';
+// import fastifyJwt from 'fastify-jwt';
 import grant from 'grant';
 
 // local imports

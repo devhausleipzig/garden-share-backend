@@ -34,9 +34,15 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           limit: Type.Number(),
           due: Type.Union([Type.Literal("today"), Type.Literal("week")]),
         },
+
         description: "GETs you a certain number of tasks sorted by due date and if it's booked or not", 
        tags: ["Tasks"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { limit, due, available } = request.query;
@@ -85,11 +91,25 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/task",
     {
       schema: {
+
         body: CreateTaskModel,
+
+        querystring: { available: Type.Boolean() },
+        description:
+          "POST: Create a new Task",
+        tags: ["Tasks"],
+        headers: {
+          authorization: Type.String(),
+        },
+
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
+
     async (req, reply) => {
       const { steps,deadline, ...rest } = req.body;
+
       try {
         const newTask = await prisma.task.create({
           data: {

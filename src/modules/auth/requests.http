@@ -5,7 +5,7 @@ Content-Type: application/json
 	"email": "testexample107@example.com",
 	"firstName": "John",
 	"lastName": "Doe",
-	"passwordHash": "secretpassword"
+	"passwordHash": "placeholder"
 }
 
 ### LOGIN - APPROVED 
@@ -25,8 +25,6 @@ POST http://localhost:8000/login
 Content-Type: application/json
 
 {
-	"email": "testexample107@example.com",
-	"passwordHash": "placeholder",
-	"approved": "false"
+	"email": "testexample303@example.com",
+	"passwordHash": "placeholder"
 }
-

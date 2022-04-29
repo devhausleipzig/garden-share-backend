@@ -40,7 +40,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           authorization: Type.String(),
         },
       },
-      //@ts-ignore
+      // @ts-ignore
       onRequest: fastify.authenticate,
     },
     async (request, reply) => {
@@ -98,6 +98,15 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
   fastify.delete<{ Params: { id: string } }>(
     "/booking/:id",
+    {
+      schema: {
+        headers: {
+          authorization: Type.String(),
+        },
+      },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
+    },
     async (request, reply) => {
       const { id } = request.params;
       try {
@@ -125,7 +134,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs the availability for a month",
         tags: ["Booking"],
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
+      // @ts-ignore
+      // onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { month } = request.query;
@@ -166,7 +180,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs you events by date",
         tags: ["Booking"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { date } = request.query;

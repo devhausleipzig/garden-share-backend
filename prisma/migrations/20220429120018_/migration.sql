@@ -12,6 +12,7 @@ CREATE TABLE "User" (
     "identifier" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "approved" BOOLEAN NOT NULL DEFAULT false,
     "role" "Role" NOT NULL DEFAULT E'USER',
     "email" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,

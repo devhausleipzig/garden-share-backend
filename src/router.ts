@@ -10,10 +10,9 @@ const allRouters: Array<
   (fastify: FastifyInstance, options: RouteOptions) => void
 > = [];
 const allTags: Array<{ name: string; description: string }> = [];
-// let allModels: Record<string, Static<TSchema>> = {};
 let allModels: OpenAPIV2.DefinitionsObject = {};
 
-glob.sync("**/routes.ts").forEach((modulePath) => {
+glob.sync("./**/routes.ts").forEach((modulePath) => {
   const module = path.parse(modulePath);
   module.dir = module.dir
     .split("/")

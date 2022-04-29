@@ -25,7 +25,6 @@ export const tags = [
 export const models = { CreateBookingModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
-
   fastify.post<{
     Body: Static<typeof CreateBookingModel>;
     Params: { id: string };
@@ -37,7 +36,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: { id: Type.String() },
         description: "POSTs a new booking",
         tags: ["Booking"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const {
@@ -94,6 +98,15 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
   fastify.delete<{ Params: { id: string } }>(
     "/booking/:id",
+    {
+      schema: {
+        headers: {
+          authorization: Type.String(),
+        },
+      },
+      // @ts-ignore
+      onRequest: fastify.authenticate,
+    },
     async (request, reply) => {
       const { id } = request.params;
       try {
@@ -121,7 +134,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs the availability for a month",
         tags: ["Booking"],
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
+      // @ts-ignore
+      // onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { month } = request.query;
@@ -162,7 +180,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs you events by date",
         tags: ["Booking"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { date } = request.query;

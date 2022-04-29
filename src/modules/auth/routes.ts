@@ -8,7 +8,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/signup",
     {
       schema: {
-        body: SignupModel
+        body: SignupModel,
       },
     },
     async (request, reply) => {
@@ -34,7 +34,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         });
         reply.send(user.identifier);
       } catch (err) {
-        fastify.log.error(err)
+        fastify.log.error(err);
         send500(reply);
       }
     }
@@ -52,9 +52,10 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       try {
         const user = await prisma.user.findUnique({
           where: {
-            email
+            email,
           },
         });
+        console.log(user?.approved);
         if (!user)
           return reply.status(404).send({
             message: "User not found!",
@@ -63,12 +64,20 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           return reply.status(401).send({
             message: "Incorrect Password",
           });
+        // @ts-ignore
+        if (user.approved !== true)
+          return reply.status(401).send({
+            message: "User not approved!",
+          });
+        const token = fastify.jwt.sign({
+          identifier: user.identifier,
+          email: user.email,
+          role: user.role,
+        });
 
-        const token = fastify.jwt.sign({ identifier: user.identifier, email: user.email, role: user.role})
-        
         reply.status(200).send({ token });
       } catch (err) {
-        fastify.log.error(err)
+        fastify.log.error(err);
         send500(reply);
       }
     }

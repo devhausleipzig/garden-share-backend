@@ -48,21 +48,21 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
      
       try {
         let tasks: Task[];
-        let whereClauses = {}
+        let whereClauses:{AND:any[]} = {
+          AND:[]
+        }
         if (due) {
-          whereClauses = {
-            ...whereClauses,
+          whereClauses.AND.push( {         
             deadline: {
               lte: due === "today" ? new Date(todaysDate) : new Date(oneWeek),
               gte: new Date(todaysDate),
             },
-          }
+          })
          }
         if (available != undefined) {
-          whereClauses = {
-            ...whereClauses,
-            bookingId: available ? { not: null } : { equals: null },
-          }
+          whereClauses.AND.push( {
+                bookingId: available ? { equals: null } : { not: null } ,
+          })
         }
         
           tasks = await prisma.task.findMany({

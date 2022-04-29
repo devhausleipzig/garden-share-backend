@@ -32,5 +32,5 @@ export const UpdateTaskModel = Type.Object({
     })
   ),
   repeating: Type.Enum(Repeats),
-  available: Type.Boolean(),
+  
 });

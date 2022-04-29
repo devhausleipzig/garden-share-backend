@@ -37,6 +37,5 @@ model Task {
     repeating Repeats  @default(NONE)
     booking   Booking? @relation(fields: [bookingId], references: [identifier])
     bookingId String?
-    available Boolean @default(true)
    
 }

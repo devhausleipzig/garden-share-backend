@@ -12,7 +12,7 @@ import {
   UpdateTaskModel,
 } from "./models";
 import { Task } from "@prisma/client";
-import { FastifyReply, FastifyRequest } from "fastify";
+
 
 type dueQuery = "today" | "week";
 
@@ -25,7 +25,9 @@ export const tags = [
 export const models = [CreateTaskModel, GetAvailableTaskModel];
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
-  fastify.get<{ Querystring: { limit: number; due: dueQuery; available: boolean } }>(
+  fastify.get<{
+    Querystring: { limit: number; due: dueQuery; available: boolean };
+  }>(
     "/task",
     {
       schema: {
@@ -35,8 +37,9 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           due: Type.Union([Type.Literal("today"), Type.Literal("week")]),
         },
 
-        description: "GETs you a certain number of tasks sorted by due date and if it's booked or not", 
-       tags: ["Tasks"],
+        description:
+          "GETs you a certain number of tasks sorted by due date and if it's booked or not",
+        tags: ["Tasks"],
         headers: {
           authorization: Type.String(),
         },
@@ -51,27 +54,27 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       date2.setDate(date2.getDate() + 7);
       const todaysDate = date.toISOString().substring(0, 10);
       const oneWeek = date2.toISOString().substring(0, 10);
-     
+
       try {
         let tasks: Task[];
-        let whereClauses:{AND:any[]} = {
-          AND:[]
-        }
+        let whereClauses: { AND: any[] } = {
+          AND: [],
+        };
         if (due) {
-          whereClauses.AND.push( {         
+          whereClauses.AND.push({
             deadline: {
               lte: due === "today" ? new Date(todaysDate) : new Date(oneWeek),
               gte: new Date(todaysDate),
             },
-          })
-         }
-        if (available != undefined) {
-          whereClauses.AND.push( {
-                bookingId: available ? { equals: null } : { not: null } ,
-          })
+          });
         }
-        
-          tasks = await prisma.task.findMany({
+        if (available != undefined) {
+          whereClauses.AND.push({
+            bookingId: available ? { equals: null } : { not: null },
+          });
+        }
+
+        tasks = await prisma.task.findMany({
           where: whereClauses,
           take: limit,
           orderBy: {
@@ -91,24 +94,21 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     "/task",
     {
       schema: {
-
         body: CreateTaskModel,
 
         querystring: { available: Type.Boolean() },
-        description:
-          "POST: Create a new Task",
+        description: "POST: Create a new Task",
         tags: ["Tasks"],
         headers: {
           authorization: Type.String(),
         },
-
       },
       //@ts-ignore
       onRequest: fastify.authenticate,
     },
 
     async (req, reply) => {
-      const { steps,deadline, ...rest } = req.body;
+      const { steps, deadline, ...rest } = req.body;
 
       try {
         const newTask = await prisma.task.create({
@@ -127,6 +127,15 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
   fastify.delete<{ Params: { id: string } }>(
     "/task/:id",
+    {
+      schema: {
+        params: {
+          id: Type.String(),
+        },
+        description: "DELETE: delete the selected Task by 'id' ",
+        tags: ["Tasks"],
+      },
+    },
     async (request, reply) => {
       const { id } = request.params;
       try {
@@ -156,7 +165,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     async (req, reply) => {
       const { id } = req.params;
       //  const {type, deadline, steps, repeating, available} = req.body;
-      const { steps,deadline, ...rest } = req.body;
+      const { steps, deadline, ...rest } = req.body;
       try {
         const updatedTask = await prisma.task.update({
           data: {

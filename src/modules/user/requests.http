@@ -5,7 +5,7 @@ Content-Type: application/json
 	"email": "testexample303@example.com",
 	"firstName": "John",
 	"lastName": "Doe",
-	"passwordHash": "secretpassword",
+	"passwordHash": "placeholder",
 	"passwordSalt": "101010101010101"
 }
 

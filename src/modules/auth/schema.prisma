@@ -1,3 +1,0 @@
-model User {
-  identifier String @id @default(uuid())
-}

@@ -45,7 +45,7 @@ CREATE TABLE "Task" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "type" "TaskType" NOT NULL,
     "deadline" TIMESTAMP(3) NOT NULL,
-    "steps" TEXT NOT NULL,
+    "steps" JSONB NOT NULL,
     "repeating" "Repeats" NOT NULL DEFAULT E'NONE',
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("identifier")

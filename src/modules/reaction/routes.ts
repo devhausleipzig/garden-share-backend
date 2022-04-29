@@ -11,7 +11,7 @@ import { CreateReactionModel } from "./models";
 export const tags = [
   {
     name: "Reactions",
-    description: "Example description for message-related endpoints",
+    description: "endpoints for the reactions model ",
   },
 ];
 

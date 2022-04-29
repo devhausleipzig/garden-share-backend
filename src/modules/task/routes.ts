@@ -52,7 +52,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             },
             take: limit,
             orderBy: {
-              createdAt: "desc",
+              deadline: "desc",
             },
           });
         }
@@ -65,31 +65,29 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
   fastify.get<{
     Body: Static<typeof GetAvailableTaskModel>;
-    Querystring: { available: boolean };
   }>(
     "/tasks",
     {
       schema: {
-        querystring: { available: Type.Boolean() },
         description:
           "GETs you all available tasks based on wether a task is booked or not",
         tags: ["Tasks"],
       },
     },
     async (request, reply) => {
-      const { available } = request.query;
-
       try {
         let tasks: Task[];
-        if (available === undefined) {
-          tasks = await prisma.task.findMany();
-        } else {
-          tasks = await prisma.task.findMany({
-            where: {
-              bookingId: available ? { not: null } : { equals: null },
+
+        tasks = await prisma.task.findMany({
+          where: {
+            bookingId: { equals: null },
+          },
+          orderBy: [
+            {
+              deadline: "asc",
             },
-          });
-        }
+          ],
+        });
 
         reply.send(tasks);
       } catch (err) {

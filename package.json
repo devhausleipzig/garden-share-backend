@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon",
-    "start": "npx prismix && npx prisma format && npx prisma migrate dev && ts-node src/server.ts",
+    "start": "npx prismix && npx prisma format && npx prisma migrate dev && ts-node -T src/server.ts",
     "db:push": "npx prismix && npx prisma db push",
     "db:migrate": "npx prismix && npx prisma format && npx prisma migrate dev",
     "db:studio": "npx prisma studio"
@@ -13,7 +13,6 @@
   "devDependencies": {
     "@sinclair/typebox": "^0.23.4",
     "@types/express": "^4.17.13",
-    "@types/fastify-cors": "^2.1.0",
     "@types/glob": "^7.2.0",
     "@types/node": "^17.0.25",
     "dotenv": "^10.0.0",

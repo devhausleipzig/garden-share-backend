@@ -28,6 +28,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           limit: Type.Number(),
           due: Type.Union([Type.Literal("today"), Type.Literal("week")]),
         },
+        description: "GETs you a certain number of tasks sorted by due date",
+        tags: ["Tasks"],
       },
     },
     async (request, reply) => {
@@ -97,4 +99,5 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       }
     }
   );
+  //begin here
 }

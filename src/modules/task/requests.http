@@ -1,6 +1,24 @@
-GET http://localhost:8000/task?limit=10&due=today
+GET http://localhost:8000/task
+Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/tasks
+GET http://localhost:8000/task?due=week
+
+###
+GET http://localhost:8000/task?available=true
+
+###
+
+GET http://localhost:8000/task?due=week&available=true
+
+
+###
+POST http://localhost:8000/task
 Content-Type: application/json
+
+{
+    "type": "SEEDING",
+  "deadline": "2022-04-30T00:00:00.000Z",
+  "steps": [] 
+}

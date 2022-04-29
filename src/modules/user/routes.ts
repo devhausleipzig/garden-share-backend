@@ -8,7 +8,13 @@ import {
 } from "../base.routes";
 
 // local imports
-import { CreateUserModel, UpdateRoleModel, UpdateUserModel } from "./models";
+import {
+  ApproveUserModel,
+  UpdateRoleModel,
+  CreateUserModel,
+  UpdateUserModel,
+} from "./models";
+import fastify from "fastify";
 import { send401, send500 } from "../../utils/errors";
 
 export const tags = [
@@ -209,6 +215,49 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         });
         reply.send(user.identifier);
       } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+  fastify.put<{
+    Params: { id: string };
+  }>(
+    "/users/:id/approved",
+    {
+      schema: {
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+        description: "PUTs sign up approval from the admin for a specific User",
+        tags: ["User"],
+        headers: { authorization: Type.String() },
+      },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      // @ts-ignore
+      const tokenId = request.user.identifier;
+      const requestUser = await prisma.user.findUnique({
+        where: { identifier: tokenId },
+      });
+      if (requestUser?.identifier !== tokenId) {
+        send401(reply);
+      }
+      if (requestUser?.role !== "ADMIN") {
+        send401(reply);
+      }
+      try {
+        const updatedUser = await prisma.user.update({
+          where: { identifier: id },
+          data: {
+            approved: true,
+          },
+        });
+        reply.send(`Sucessfully approved User: ${id}`);
+      } catch (err) {
+        console.log(err);
         send500(reply);
       }
     }

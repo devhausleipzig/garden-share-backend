@@ -18,7 +18,7 @@ type dueQuery = "today" | "week";
 export const tags = [
   {
     name: "Tasks",
-    description: "Example description for task-related endpoints",
+    description: "Endpoints related to Tasks",
   },
 ];
 export const models = { CreateTaskModel, GetAvailableTaskModel };

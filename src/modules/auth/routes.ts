@@ -6,9 +6,11 @@ import { LoginModel, SignupModel } from "./models";
 export const tags = [
   {
     name: "Authorization",
-    description: "endpoints related to the auth endpoints",
+    description: "Endpoints related to Authorization",
   },
 ];
+
+export const models = { LoginModel, SignupModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.post<{ Body: Static<typeof SignupModel> }>(

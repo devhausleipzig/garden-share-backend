@@ -18,7 +18,7 @@ import { dateRange } from "../../utils/day";
 export const tags = [
   {
     name: "Booking",
-    description: "Here you will find details to all booking-related endpoints",
+    description: "Endpoints related to Booking",
   },
 ];
 

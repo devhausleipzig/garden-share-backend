@@ -11,7 +11,7 @@ import { CreateMessageModel } from "./models";
 export const tags = [
   {
     name: "Message",
-    description: "Endpoints related to the message model",
+    description: "Endpoints related to Message",
   },
 ];
 

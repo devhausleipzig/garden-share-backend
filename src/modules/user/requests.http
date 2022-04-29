@@ -13,3 +13,12 @@ Content-Type: application/json
 
 GET http://localhost:8000/users
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMjk5ZWQ1YzgtMGI2Zi00ZmEzLWE2OTMtZDQ0ZDIwOTBhYTZkIiwiZW1haWwiOiJ0ZXN0ZXhhbXBsZTEwN0BleGFtcGxlLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjUxMDYyNjEyfQ.CtQoIBMpZWNmGCSRmnrMTdNphs2Y3uM1MFqKdpv9QBY
+
+###
+
+PUT http://localhost:8000/user/2/role
+Content-Type: application/json
+
+{
+	"role": "ADMIN"
+}

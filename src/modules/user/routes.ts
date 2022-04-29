@@ -8,8 +8,8 @@ import {
 } from "../base.routes";
 
 // local imports
-import { CreateUserModel, UpdateUserModel } from "./models";
-import { send500 } from "../../utils/errors";
+import { CreateUserModel, UpdateRoleModel, UpdateUserModel } from "./models";
+import { send401, send500 } from "../../utils/errors";
 
 export const tags = [
   {
@@ -18,7 +18,7 @@ export const tags = [
   },
 ];
 
-export const models = { CreateUserModel, UpdateUserModel };
+export const models = { CreateUserModel, UpdateUserModel, UpdateRoleModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
   fastify.get(
@@ -131,6 +131,56 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         });
         reply.send(`Sucessfully deleted: ${id}`);
       } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  // ADMIN CHANGES ROLE
+
+  fastify.put<{ Body: Static<typeof UpdateRoleModel>; Params: { id: string } }>(
+    "/user/:id/role",
+    {
+      schema: {
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+        body: UpdateRoleModel,
+        description: "PUTs (updates) user role (ADMIN only)",
+        tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
+      },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      // @ts-ignore
+      const tokenId = request.user.identifier;
+      const requestUser = await prisma.user.findUnique({
+        where: {
+          identifier: tokenId,
+        },
+      });
+      if (requestUser?.identifier !== tokenId) {
+        send401(reply);
+      }
+      const { role } = request.body;
+      if (requestUser?.role !== "ADMIN") {
+        send401(reply);
+      }
+      try {
+        const updateRole = await prisma.user.update({
+          where: { identifier: id },
+          data: {
+            role,
+          },
+        });
+        reply.status(200).send(updateRole);
+      } catch (err) {
+        console.log(err);
         send500(reply);
       }
     }

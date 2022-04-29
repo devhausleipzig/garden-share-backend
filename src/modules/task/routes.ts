@@ -57,7 +57,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             },
             take: limit,
             orderBy: {
-              createdAt: "desc",
+              deadline: "desc",
             },
           });
         }
@@ -70,12 +70,10 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
 
   fastify.get<{
     Body: Static<typeof GetAvailableTaskModel>;
-    Querystring: { available: boolean };
   }>(
     "/tasks",
     {
       schema: {
-        querystring: { available: Type.Boolean() },
         description:
           "GETs you all available tasks based on wether a task is booked or not",
         tags: ["Tasks"],
@@ -88,21 +86,45 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     },
 
     async (request, reply) => {
-      const { available } = request.query;
-
       try {
         let tasks: Task[];
-        if (available === undefined) {
-          tasks = await prisma.task.findMany();
-        } else {
-          tasks = await prisma.task.findMany({
-            where: {
-              bookingId: available ? { not: null } : { equals: null },
+
+        tasks = await prisma.task.findMany({
+          where: {
+            bookingId: { equals: null },
+          },
+          orderBy: [
+            {
+              deadline: "asc",
             },
-          });
-        }
+          ],
+        });
 
         reply.send(tasks);
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
+
+  fastify.get<{ Params: { id: string } }>(
+    "/task/:id",
+    {
+      schema: {
+        description: "GETs you a single task by id",
+        tags: ["Tasks"],
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const singleTask = await prisma.task.findUnique({
+          where: { identifier: id },
+        });
+        reply.send(singleTask);
       } catch (err) {
         send500(reply);
       }

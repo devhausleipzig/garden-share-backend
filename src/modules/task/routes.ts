@@ -95,4 +95,28 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       }
     }
   );
+
+  fastify.get<{ Params: { id: string } }>(
+    "/task/:id",
+    {
+      schema: {
+        description: "GETs you a single task by id",
+        tags: ["Tasks"],
+        params: {
+          id: Type.String({ format: "uuid" }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const singleTask = await prisma.task.findUnique({
+          where: { identifier: id },
+        });
+        reply.send(singleTask);
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
 }

@@ -28,11 +28,11 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         description: "GETs you all users",
         tags: ["User"],
         headers: {
-          authorization: Type.String()
-        }
+          authorization: Type.String(),
+        },
       },
       //@ts-ignore
-      onRequest: fastify.authenticate
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       try {
@@ -53,7 +53,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         params: {
           id: Type.String({ format: "uuid" }),
         },
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -79,7 +84,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         body: UpdateUserModel,
         description: "PUTs (updates) an already exising user",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -106,7 +116,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "DELETEs a specific user based on the user id",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;
@@ -128,7 +143,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         body: CreateUserModel,
         description: "POSTs (i.e. creates) a new user",
         tags: ["User"],
+        headers: {
+          authorization: Type.String(),
+        },
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       try {

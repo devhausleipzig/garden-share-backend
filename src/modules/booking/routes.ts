@@ -10,20 +10,21 @@ import {
 // local imports
 import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
-import { checkOneHourApart } from "../../utils/date";
+import { checkOneHourApart } from "../../utils/hour";
 import { Message } from "@prisma/client";
+import { getDaysInMonth } from "../../utils/month";
+import { dateRange } from "../../utils/day";
 
 export const tags = [
   {
     name: "Booking",
-    description: "Example description for user-related endpoints",
+    description: "Here you will find details to all booking-related endpoints",
   },
 ];
 
 export const models = { CreateBookingModel };
 
 export function router(fastify: FastifyInstance, opts: RouteOptions) {
-  // booking endpoints
 
   fastify.post<{
     Body: Static<typeof CreateBookingModel>;
@@ -34,6 +35,8 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       schema: {
         body: CreateBookingModel,
         params: { id: Type.String() },
+        description: "POSTs a new booking",
+        tags: ["Booking"],
       },
     },
     async (request, reply) => {
@@ -107,33 +110,79 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     }
   );
 
-  // ----- Events ----- //
+  // ----- Availability ----- ///
 
-  fastify.get<{ Querystring: { limit: number } }>(
-    "/events",
+  fastify.get<{ Querystring: { month: number } }>(
+    "/availability",
     {
       schema: {
         querystring: {
-          limit: Type.Number(),
+          month: Type.Number({ minimum: 1, maximum: 12 }),
         },
+        description: "GETs the availability for a month",
+        tags: ["Booking"],
       },
     },
     async (request, reply) => {
-      const { limit } = request.query;
+      const { month } = request.query;
+      let status: string[] = [];
+      const days = getDaysInMonth(new Date().getFullYear(), month - 1);
+      await Promise.all(
+        days.map(async (day) => {
+          try {
+            const availability = await dateRange(day.toISOString());
+            console.log(availability);
+            if (availability.length === 0) {
+              return status.push("free");
+            }
+            if (availability.length < 12) {
+              return status.push("partial");
+            }
+            if (availability.length === 12) {
+              return status.push("full");
+            }
+          } catch (err) {
+            console.log(err);
+            send500(reply);
+          }
+        })
+      );
+      reply.send(status);
+    }
+  );
+
+  //  GET BOOKINGS BY DATE
+
+  fastify.get<{ Querystring: { date: string } }>(
+    "/bookings",
+    {
+      schema: {
+        querystring: {
+          date: Type.String({ format: "date" }),
+        },
+        description: "GETs you events by date",
+        tags: ["Booking"],
+      },
+    },
+    async (request, reply) => {
+      const { date } = request.query;
+      const startOfDay = new Date(date);
+
+      startOfDay.setUTCHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
       try {
-        const events = await prisma.booking.findMany({
+        const slots = await prisma.booking.findMany({
           where: {
-            private: false,
-          },
-          take: limit,
-          orderBy: {
-            start: "desc",
+            start: {
+              lte: endOfDay,
+              gte: startOfDay,
+            },
           },
         });
-        reply.status(200).send(events);
+        reply.status(200).send(slots);
       } catch (err) {
         send500(reply);
-        console.log(err);
       }
     }
   );

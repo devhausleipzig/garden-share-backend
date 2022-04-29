@@ -27,7 +27,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       schema: {
         description: "GETs you all users",
         tags: ["User"],
+        headers: {
+          authorization: Type.String()
+        }
       },
+      //@ts-ignore
+      onRequest: fastify.authenticate
     },
     async (request, reply) => {
       try {

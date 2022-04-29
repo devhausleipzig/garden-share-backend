@@ -3,12 +3,14 @@
 ## Prerequisites
 - Create an `.env` file and add to it:
 ```sh
+NODE_ENV=development
 POSTGRES_USER=local_admin
 POSTGRES_PASSWORD=unsafeLocalPassword0!
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=main
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public&connect_timeout=300
+SESSION_SECRET=aKogmHdm9HAk4a3p
 ```
 - Run `docker-compose build` to build image for backend container (prisma DB client & express http server)
 - Run `docker-compose up -d` to spin up both DB and backend containers

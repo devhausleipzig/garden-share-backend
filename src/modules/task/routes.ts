@@ -119,4 +119,30 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       }
     }
   );
+
+  fastify.post<{
+    Body: Static<typeof CreateTaskModel>;
+  }>(
+    "/tasks",
+    {
+      schema: {
+        body: CreateTaskModel,
+        description: "POSTs a new task ",
+        tags: ["Tasks"],
+      },
+    },
+    async (request, reply) => {
+      const { type, repeating, deadline, steps } = request.body;
+      try {
+        const task = await prisma.task.create({
+          data: {
+            ...request.body,
+          },
+        });
+        reply.send(task.identifier);
+      } catch (err) {
+        send500(reply);
+      }
+    }
+  );
 }

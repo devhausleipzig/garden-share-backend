@@ -145,26 +145,17 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
       const { month } = request.query;
       let status: string[] = [];
       const days = getDaysInMonth(new Date().getFullYear(), month - 1);
-      await Promise.all(
-        days.map(async (day) => {
-          try {
-            const availability = await dateRange(day.toISOString());
-            console.log(availability);
-            if (availability.length === 0) {
-              return status.push("free");
-            }
-            if (availability.length < 12) {
-              return status.push("partial");
-            }
-            if (availability.length === 12) {
-              return status.push("full");
-            }
-          } catch (err) {
-            console.log(err);
-            send500(reply);
-          }
-        })
-      );
+      for (const day of days) {
+        const availability = await dateRange(day.toISOString());
+        if (availability.length === 0) {
+          status.push("free");
+        } else if (availability.length < 12) {
+          status.push("partial");
+        } else if (availability.length === 12) {
+          status.push("full");
+        }
+      }
+
       reply.send(status);
     }
   );
@@ -180,12 +171,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs you events by date",
         tags: ["Booking"],
-        headers: {
-          authorization: Type.String(),
-        },
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
       //@ts-ignore
-      onRequest: fastify.authenticate,
+      // onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { date } = request.query;

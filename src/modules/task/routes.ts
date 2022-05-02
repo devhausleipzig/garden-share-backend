@@ -79,12 +79,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         description:
           "GETs you all available tasks based on wether a task is booked or not",
         tags: ["Tasks"],
-        headers: {
-          authorization: Type.String(),
-        },
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
       //@ts-ignore
-      onRequest: fastify.authenticate,
+      // onRequest: fastify.au==thenticate,
     },
 
     async (request, reply) => {

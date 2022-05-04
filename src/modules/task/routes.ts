@@ -98,12 +98,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         querystring: { available: Type.Boolean() },
         description: "POST: Create a new Task",
         tags: ["Tasks"],
-        headers: {
-          authorization: Type.String(),
-        },
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
       //@ts-ignore
-      onRequest: fastify.authenticate,
+      // onRequest: fastify.au==thenticate,
     },
 
     async (req, reply) => {

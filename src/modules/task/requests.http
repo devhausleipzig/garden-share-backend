@@ -18,7 +18,7 @@ POST http://localhost:8000/task
 Content-Type: application/json
 
 {
-    "type": "SEEDING",
-  "deadline": "2022-04-30T00:00:00.000Z",
+    "type": "WATERING",
+  "deadline": "2022-05-30T00:00:00.000Z",
   "steps": [] 
 }

@@ -136,12 +136,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         },
         description: "GETs the availability for a month",
         tags: ["Booking"],
-        headers: {
-          authorization: Type.String(),
-        },
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
       // @ts-ignore
-      onRequest: fastify.authenticate,
+      // onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { month } = request.query;

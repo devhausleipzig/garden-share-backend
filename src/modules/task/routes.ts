@@ -39,12 +39,12 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
         description:
           "GETs you a certain number of tasks sorted by due date and if it's booked or not",
         tags: ["Tasks"],
-        headers: {
-          authorization: Type.String(),
-        },
+        // headers: {
+        //   authorization: Type.String(),
+        // },
       },
       //@ts-ignore
-      onRequest: fastify.authenticate,
+      // onRequest: fastify.authenticate,
     },
     async (request, reply) => {
       const { limit, due, available } = request.query;

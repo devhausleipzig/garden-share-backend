@@ -12,7 +12,7 @@ import { CreateBookingModel } from "./models";
 import { send500 } from "../../utils/errors";
 import { checkOneHourApart } from "../../utils/hour";
 import { Message } from "@prisma/client";
-import { getDaysInMonth } from "../../utils/month";
+import { getDayzInMonth } from "../../utils/month";
 import { dateRange } from "../../utils/day";
 
 export const tags = [
@@ -144,7 +144,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     async (request, reply) => {
       const { month } = request.query;
       let status: string[] = [];
-      const days = getDaysInMonth(new Date().getFullYear(), month - 1);
+      const days = getDayzInMonth(new Date().getFullYear(), month - 1);
       for (const day of days) {
         const availability = await dateRange(day.toISOString());
         if (availability.length === 0) {

@@ -1,36 +1,36 @@
-
 model User {
-    identifier             String       @id @default(uuid())
-    bookings Booking[]
+    identifier String    @id @default(uuid())
+    bookings   Booking[]
 }
 
 model Message {
-    identifier        String      @id @default(uuid())
-    booking Booking?
+    identifier String   @id @default(uuid())
+    booking    Booking?
 }
 
 model Task {
-    identifier        String   @id @default(uuid())
-    booking   Booking? @relation(fields: [bookingId], references: [identifier])
-    bookingId String?
+    identifier String   @id @default(uuid())
+    booking    Booking?
+    bookingId  String?
 }
 
 /////////////////
 /////////////////
 
 model Booking {
-  identifier         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  start      DateTime
-  end        DateTime
-  private    Boolean  @default(false)
-  overnight  Boolean  @default(false)
-  published  Boolean  @default(false)
-  title      String?
-  bookedBy   User     @relation(fields: [userId], references: [identifier])
-  userId String
-  message    Message? @relation(fields: [messageId], references: [identifier])
-  messageId  String?  @unique
-  tasks      Task[]
+    identifier String   @id @default(uuid())
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    start      DateTime
+    end        DateTime
+    private    Boolean  @default(false)
+    overnight  Boolean  @default(false)
+    published  Boolean  @default(false)
+    title      String?
+    bookedBy   User     @relation(fields: [userId], references: [identifier])
+    userId     String
+    message    Message? @relation(fields: [messageId], references: [identifier])
+    messageId  String?  @unique
+    task       Task     @relation(fields: [taskId], references: [identifier])
+    taskId     String   @unique
 }

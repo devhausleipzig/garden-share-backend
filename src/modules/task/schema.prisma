@@ -4,8 +4,9 @@ datasource db {
 }
 
 model Booking {
-    identifier             String       @id @default(uuid())
-    tasks Task[]
+    identifier String @id @default(uuid())
+    task       Task   @relation(fields: [taskId], references: [identifier])
+    taskId     String @unique
 }
 
 /////////////////
@@ -28,14 +29,14 @@ enum Repeats {
 }
 
 model Task {
-    identifier        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    type      TaskType
-    deadline  DateTime
-    steps     Json
-    repeating Repeats  @default(NONE)
-    booking   Booking? @relation(fields: [bookingId], references: [identifier])
-    bookingId String?
-   
+    identifier String   @id @default(uuid())
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    type       TaskType
+    deadline   DateTime
+    steps      Json
+    repeating  Repeats  @default(NONE)
+    booking    Booking?
+    bookingId  String?
+
 }

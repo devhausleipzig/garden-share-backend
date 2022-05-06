@@ -87,7 +87,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
           role: user.role,
         });
 
-        reply.status(200).send({ token });
+        reply.status(200).send({ token, user });
       } catch (err) {
         fastify.log.error(err);
         send500(reply);

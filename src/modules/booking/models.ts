@@ -8,7 +8,6 @@ export const CreateBookingModel = Type.Object({
   overnight: Type.Optional(Type.Boolean()),
   published: Type.Optional(Type.Boolean()),
   title: Type.Optional(Type.String()),
-  tasks: Type.Array(Type.String({ format: "uuid" })),
-  bookedBy: Type.String({ format: "uuid" }),
+  task: Type.String({ format: "uuid" }),
   message: Type.Optional(CreateMessageModel),
 });

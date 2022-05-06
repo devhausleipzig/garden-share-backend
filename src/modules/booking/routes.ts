@@ -45,8 +45,7 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
     },
     async (request, reply) => {
       const {
-        bookedBy,
-        tasks,
+        task,
         end,
         start,
         message,
@@ -85,9 +84,10 @@ export function router(fastify: FastifyInstance, opts: RouteOptions) {
             title,
             userId: id,
             messageId: fetchedMessage?.identifier,
-            tasks: { connect: tasks.map((task) => ({ identifier: task })) },
+            taskId: task,
           },
         });
+        console.log(booking);
         reply.send(booking.identifier);
       } catch (err) {
         console.log(err);
